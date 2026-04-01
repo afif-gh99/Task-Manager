@@ -5,12 +5,18 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import Root from "./Pages/Root";
 import SignIn from "./Pages/SignIn";
 import SignUp from "./Pages/SignUp";
+import Dashboard from "./Pages/Dashboard";
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "",
     element: <Root />,
-    children: [],
+    children: [
+      {
+        path: "/dashboard",
+        element: <Dashboard />,
+      },
+    ],
   },
   {
     path: "/signin",
