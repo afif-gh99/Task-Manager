@@ -1,15 +1,15 @@
 const NavBar = ({
   logoSrc,
   logoAlt = "logo",
-  searchPlaceholder = "Search...",
+  searchPlaceholder = "Search tasks by title...",
   searchValue = "",
   onSearchChange,
   logoutText = "Logout",
   onLogout,
 }) => {
   return (
-    <div className="w-full rounded-2xl  flex items-center gap-4">
-      <div className="shrink-0 w-12 h-12 rounded-xl bg-white flex items-center justify-center overflow-hidden border border-slate-200">
+    <div className="animate-fade-up flex w-full flex-col gap-4 rounded-[28px] bg-[var(--color-surface-elevated)] px-4 py-4 shadow-[var(--color-shadow-soft)] backdrop-blur-sm transition-transform duration-300 sm:px-5 lg:flex-row lg:items-center">
+      <div className="w-42 shrink-0 sm:w-50">
         <img
           src={logoSrc}
           alt={logoAlt}
@@ -23,14 +23,14 @@ const NavBar = ({
           value={searchValue}
           onChange={onSearchChange}
           placeholder={searchPlaceholder}
-          className="w-full h-12 rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-700 outline-none focus:border-orange-400"
+          className="h-13 w-full rounded-[22px] border border-[var(--color-border-strong)] bg-white px-5 text-sm text-[var(--color-text-primary)] outline-none transition duration-200 placeholder:text-[var(--color-text-muted)] focus:border-orange focus:ring-2 focus:ring-[rgba(243,131,6,0.18)]"
         />
       </div>
 
       <button
         type="button"
         onClick={onLogout}
-        className="h-12 px-5 rounded-xl border border-orange-300 text-orange-500 bg-orange-50 hover:bg-orange-100 transition font-medium"
+        className="h-13 shrink-0 cursor-pointer rounded-[22px] border border-[rgba(243,131,6,0.28)] bg-[rgba(243,131,6,0.10)] px-5 text-sm font-semibold text-orange transition duration-200 hover:-translate-y-0.5 hover:bg-[rgba(243,131,6,0.16)]"
       >
         {logoutText}
       </button>

@@ -1,6 +1,64 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap');
+@import "tailwindcss";
 
-@theme{
+:root {
+  --color-page-bg: #eef3f8;
+  --color-page-glow: rgba(116, 156, 255, 0.24);
+  --color-surface-primary: #ffffff;
+  --color-surface-elevated: rgba(255, 255, 255, 0.82);
+  --color-surface-muted: #edf3ff;
+  --color-surface-soft: #f7faff;
+  --color-border-strong: #d9e3f6;
+  --color-border-soft: #e6edf9;
+  --color-text-primary: #000000;
+  --color-text-secondary: #526384;
+  --color-text-muted: #7c8ca8;
+  --color-primary: #5d8ef6;
+  --color-primary-hover: #4f82f0;
+  --color-primary-soft: #eef4ff;
+  --color-danger: #5a6788;
+  --color-danger-surface: #f8fbff;
+  --color-status-pending-bg: #ffd97a;
+  --color-status-pending-text: #c78a00;
+  --color-status-progress-bg: #6797f7;
+  --color-status-progress-text: #ffffff;
+  --color-status-done-bg: #4fd174;
+  --color-status-done-text: #ffffff;
+  --color-shadow-soft: 0 20px 55px rgba(49, 74, 143, 0.09);
+  --color-shadow-pill: 0 12px 30px rgba(99, 149, 249, 0.18);
+}
+
+@theme {
   --font-cairo: 'Cairo', sans-serif;
+  --color-orange: #F38306;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 420ms ease-out both;
+}
+
+.animate-fade-in {
+  animation: fade-in 320ms ease-out both;
 }

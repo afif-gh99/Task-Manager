@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { RiFacebookCircleLine } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 const Sign = ({
   title,
@@ -38,12 +38,12 @@ const Sign = ({
         <div className="px-6 py-5 md:px-10 md:py-8 flex flex-col justify-center">
           <div className="flex items-center gap-3 mb-6 md:mb-8">
             <img
-              src="/assets/proteamLogo.png"
+              src="/public/assets/proteamLogo.png"
               alt="logo"
               className="w-10 h-10 md:w-12 md:h-12 object-contain"
             />
             <h1 className="text-2xl md:text-3xl font-bold text-[#202240]">
-              Pro Team
+              ProTeam
             </h1>
           </div>
 
@@ -128,9 +128,9 @@ const Sign = ({
           </div>
         </div>
 
-        <div className="hidden md:flex items-center justify-center bg-[#f9f7fc] p-6 lg:p-8">
+        <div className="hidden md:flex items-center justify-center bg-[#faf9ff] p-6 lg:p-8">
           <img
-            src="/assets/photo1.png"
+            src="/public/assets/photo1.png"
             alt="auth"
             className="w-full max-w-95 max-h-[80%] object-contain"
           />
