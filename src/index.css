@@ -13,6 +13,7 @@
   --color-text-primary: #000000;
   --color-text-secondary: #526384;
   --color-text-muted: #7c8ca8;
+  --color-orange: #f38306;
   --color-primary: #5d8ef6;
   --color-primary-hover: #4f82f0;
   --color-primary-soft: #eef4ff;
@@ -30,7 +31,6 @@
 
 @theme {
   --font-cairo: 'Cairo', sans-serif;
-  --color-orange: #F38306;
 }
 
 @keyframes fade-up {
@@ -55,10 +55,26 @@
   }
 }
 
+@keyframes modal-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
 .animate-fade-up {
   animation: fade-up 420ms ease-out both;
 }
 
 .animate-fade-in {
   animation: fade-in 320ms ease-out both;
+}
+
+.animate-modal-pop {
+  animation: modal-pop 260ms ease-out both;
 }
