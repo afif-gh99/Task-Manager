@@ -33,14 +33,14 @@ const Sign = ({
   };
 
   return (
-    <div className="h-screen overflow-hidden bg-[#eef2f7] flex items-center justify-center p-4 md:p-6">
-      <div className="w-full max-w-6xl h-[calc(100vh-32px)] md:h-[calc(100vh-48px)] bg-white rounded-[30px] shadow-md overflow-hidden grid grid-cols-1 md:grid-cols-2">
-        <div className="px-6 py-5 md:px-10 md:py-8 flex flex-col justify-center">
-          <div className="flex items-center gap-3 mb-6 md:mb-8">
+    <div className="flex h-screen items-center justify-center overflow-hidden bg-[#eef2f7] p-4 md:p-6">
+      <div className="animate-fade-up grid h-[calc(100vh-32px)] w-full max-w-6xl overflow-hidden rounded-[30px] bg-white shadow-[var(--color-shadow-soft)] transition-all duration-300 md:h-[calc(100vh-48px)] md:grid-cols-2">
+        <div className="flex flex-col justify-center px-6 py-5 md:px-10 md:py-8">
+          <div className="mb-6 flex items-center gap-3 md:mb-8">
             <img
               src="/assets/proteamLogo.png"
               alt="logo"
-              className="w-10 h-10 md:w-12 md:h-12 object-contain"
+              className="h-10 w-10 object-contain transition-transform duration-300 hover:scale-105 md:h-12 md:w-12"
             />
             <h1 className="text-2xl md:text-3xl font-bold text-[#202240]">
               ProTeam
@@ -48,11 +48,11 @@ const Sign = ({
           </div>
 
           <div className="w-full max-w-[26.25rem]">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#202240] mb-2 md:mb-3">
+            <h2 className="mb-2 text-3xl font-bold text-[#202240] md:mb-3 md:text-4xl">
               {title}
             </h2>
 
-            <p className="text-gray-500 mb-5 md:mb-6 text-sm md:text-base">
+            <p className="mb-5 text-sm text-gray-500 md:mb-6 md:text-base">
               {subtitle}
             </p>
 
@@ -65,7 +65,7 @@ const Sign = ({
                   placeholder={field.placeholder}
                   required
                   onChange={handleChange}
-                  className="w-full h-11 md:h-12 px-4 border border-gray-300 rounded-lg outline-none focus:border-blue-500"
+                  className="h-11 w-full rounded-lg border border-gray-300 px-4 outline-none transition duration-200 focus:border-blue-500 focus:shadow-[0_0_0_3px_rgba(93,142,246,0.14)] md:h-12"
                 />
               ))}
 
@@ -80,13 +80,13 @@ const Sign = ({
 
               <button
                 type="submit"
-                className="w-full h-11 md:h-12 rounded-lg bg-blue-500 hover:bg-blue-600 duration-300 text-white font-medium cursor-pointer"
+                className="h-11 w-full cursor-pointer rounded-lg bg-blue-500 text-white font-medium transition duration-200 hover:-translate-y-0.5 hover:bg-blue-600 md:h-12"
               >
                 {buttonText}
               </button>
             </form>
 
-            <div className="text-center mt-3 md:mt-4">
+            <div className="mt-3 text-center md:mt-4">
               <span className="text-sm text-gray-600">{bottomText} </span>
               <Link
                 to={bottomLinkTo}
@@ -96,7 +96,7 @@ const Sign = ({
               </Link>
             </div>
 
-            <div className="flex items-center gap-4 my-4 md:my-5">
+            <div className="my-4 flex items-center gap-4 md:my-5">
               <div className="flex-1 h-px bg-gray-300"></div>
               <span className="text-sm text-[#202240]">{buttonText} with</span>
               <div className="flex-1 h-px bg-gray-300"></div>
@@ -106,7 +106,7 @@ const Sign = ({
               <button
                 type="button"
                 onClick={onGoogleClick}
-                className="h-11 md:h-12 border border-gray-300 rounded-lg flex items-center justify-center gap-1.5 bg-white cursor-pointer"
+                className="flex h-11 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-gray-300 bg-white transition duration-200 hover:-translate-y-0.5 hover:border-blue-300 md:h-12"
               >
                 <span className="text-[19px]">
                   <FcGoogle />
@@ -117,7 +117,7 @@ const Sign = ({
               <button
                 type="button"
                 onClick={onFacebookClick}
-                className="h-11 md:h-12 rounded-lg flex items-center justify-center gap-1.5 bg-[#4f6fb5] text-white cursor-pointer"
+                className="flex h-11 cursor-pointer items-center justify-center gap-1.5 rounded-lg bg-[#4f6fb5] text-white transition duration-200 hover:-translate-y-0.5 hover:bg-[#4464ab] md:h-12"
               >
                 <span className="text-[19px]">
                   <RiFacebookCircleLine />
@@ -128,11 +128,11 @@ const Sign = ({
           </div>
         </div>
 
-        <div className="hidden md:flex items-center justify-center bg-[#faf9ff] p-6 lg:p-8">
+        <div className="animate-fade-in hidden items-center justify-center bg-[#faf9ff] p-6 md:flex lg:p-8">
           <img
             src="/assets/photo1.png"
             alt="auth"
-            className="w-full max-w-[23.75rem] max-h-[80%] object-contain"
+            className="max-h-[80%] w-full max-w-[23.75rem] object-contain transition-transform duration-500 hover:scale-[1.02]"
           />
         </div>
       </div>
