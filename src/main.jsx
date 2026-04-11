@@ -11,14 +11,8 @@ import EditTask from "./Pages/EditTask";
 
 const router = createBrowserRouter([
   {
-    path: "",
-    element: <Root />,
-    children: [
-      {
-        path: "/dashboard",
-        element: <Dashboard />,
-      },
-    ],
+    path: "/",
+    element: <SignIn />,
   },
   {
     path: "/signin",
@@ -30,7 +24,13 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <Dashboard />,
+    element: <Root />,
+    children: [
+      {
+        index: true,
+        element: <Dashboard />,
+      },
+    ],
   },
   {
     path: "/tasks/create",

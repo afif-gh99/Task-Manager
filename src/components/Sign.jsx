@@ -38,7 +38,7 @@ const Sign = ({
         <div className="px-6 py-5 md:px-10 md:py-8 flex flex-col justify-center">
           <div className="flex items-center gap-3 mb-6 md:mb-8">
             <img
-              src="/public/assets/proteamLogo.png"
+              src="/assets/proteamLogo.png"
               alt="logo"
               className="w-10 h-10 md:w-12 md:h-12 object-contain"
             />
@@ -47,7 +47,7 @@ const Sign = ({
             </h1>
           </div>
 
-          <div className="w-full max-w-105">
+          <div className="w-full max-w-[26.25rem]">
             <h2 className="text-3xl md:text-4xl font-bold text-[#202240] mb-2 md:mb-3">
               {title}
             </h2>
@@ -130,9 +130,9 @@ const Sign = ({
 
         <div className="hidden md:flex items-center justify-center bg-[#faf9ff] p-6 lg:p-8">
           <img
-            src="/public/assets/photo1.png"
+            src="/assets/photo1.png"
             alt="auth"
-            className="w-full max-w-95 max-h-[80%] object-contain"
+            className="w-full max-w-[23.75rem] max-h-[80%] object-contain"
           />
         </div>
       </div>
