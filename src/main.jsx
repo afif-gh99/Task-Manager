@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import Root from "./Pages/Root";
 import SignIn from "./Pages/SignIn";
 import SignUp from "./Pages/SignUp";
+import Dashboard from "./Pages/Dashboard";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: <SignUp />,
+  },
+  {
+    path: "/dashboard",
+    element: <Dashboard />,
   },
 ]);
 createRoot(document.getElementById("root")).render(
