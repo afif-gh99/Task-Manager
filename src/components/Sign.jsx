@@ -42,13 +42,13 @@ const Sign = ({
               alt="logo"
               className="h-10 w-10 object-contain transition-transform duration-300 hover:scale-105 md:h-12 md:w-12"
             />
-            <h1 className="text-2xl md:text-3xl font-bold text-[#202240]">
+            <h1 className="text-xl font-bold text-[#202240] md:text-2xl">
               ProTeam
             </h1>
           </div>
 
           <div className="w-full max-w-[26.25rem]">
-            <h2 className="mb-2 text-3xl font-bold text-[#202240] md:mb-3 md:text-4xl">
+            <h2 className="mb-2 text-2xl font-bold text-[#202240] md:mb-3 md:text-3xl">
               {title}
             </h2>
 
@@ -65,7 +65,7 @@ const Sign = ({
                   placeholder={field.placeholder}
                   required
                   onChange={handleChange}
-                  className="h-11 w-full rounded-lg border border-gray-300 px-4 outline-none transition duration-200 focus:border-blue-500 focus:shadow-[0_0_0_3px_rgba(93,142,246,0.14)] md:h-12"
+                  className="h-11 w-full rounded-lg border border-gray-300 px-4 text-sm outline-none transition duration-200 focus:border-blue-500 focus:shadow-[0_0_0_3px_rgba(93,142,246,0.14)] md:h-12"
                 />
               ))}
 

@@ -22,11 +22,7 @@ const statusConfig = {
   },
 };
 
-const TasksTable = ({
-  tasks,
-  onDeleteTask,
-  onTaskStatusChange,
-}) => {
+const TasksTable = ({ tasks, onDeleteTask, onTaskStatusChange }) => {
   const navigate = useNavigate();
 
   const handleEditTask = (taskId) => {
@@ -37,7 +33,7 @@ const TasksTable = ({
     <section className="animate-fade-up mt-8 overflow-hidden rounded-[34px] border border-[var(--color-border-strong)] bg-[var(--color-surface-elevated)] shadow-[var(--color-shadow-soft)] backdrop-blur-sm transition-all duration-300">
       <div className="flex flex-col gap-4 px-6 py-6 sm:flex-row sm:items-center sm:justify-between md:px-7">
         <div>
-          <h2 className="text-4xl font-extrabold tracking-tight text-[var(--color-text-primary)] md:text-[3rem]">
+          <h2 className="text-3xl font-extrabold tracking-tight text-[var(--color-text-primary)] md:text-4xl">
             My tasks
           </h2>
         </div>
@@ -45,7 +41,7 @@ const TasksTable = ({
         <button
           type="button"
           onClick={() => navigate("/tasks/create")}
-          className="inline-flex h-14 cursor-pointer items-center justify-center gap-3 rounded-[22px] bg-[linear-gradient(180deg,#6f9fff_0%,var(--color-primary)_100%)] px-6 text-base font-bold text-white shadow-[var(--color-shadow-pill)] transition duration-200 hover:-translate-y-1 hover:brightness-105"
+          className="inline-flex h-12 cursor-pointer items-center justify-center gap-3 rounded-[22px] bg-[linear-gradient(180deg,#6f9fff_0%,var(--color-primary)_100%)] px-5 text-sm font-bold text-white shadow-[var(--color-shadow-pill)] transition duration-200 hover:-translate-y-1 hover:brightness-105 md:h-14 md:px-6 md:text-base"
         >
           <span className="text-xl leading-none">+</span>
           Add Task
@@ -73,7 +69,10 @@ const TasksTable = ({
                 onEdit={handleEditTask}
                 onDelete={onDeleteTask}
                 onStatusChange={(taskId) =>
-                  onTaskStatusChange(taskId, statusConfig[task.status].nextStatus)
+                  onTaskStatusChange(
+                    taskId,
+                    statusConfig[task.status].nextStatus,
+                  )
                 }
               />
             ))}

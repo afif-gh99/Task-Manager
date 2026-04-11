@@ -41,23 +41,23 @@ const TaskForm = ({
       <div className="mb-8 flex flex-wrap items-center gap-3 text-[var(--color-text-secondary)]">
         <Link
           to={backTo}
-          className="inline-flex items-center gap-2 text-base font-semibold transition hover:text-[var(--color-primary)]"
+          className="inline-flex items-center gap-2 text-sm font-semibold transition hover:text-[var(--color-primary)] md:text-base"
         >
           <span className="text-xl leading-none">&larr;</span>
           {backLabel}
         </Link>
         {badgeLabel && (
-          <div className="inline-flex items-center rounded-full bg-[var(--color-primary-soft)] px-4 py-2 text-sm font-bold text-[var(--color-primary)]">
+          <div className="inline-flex items-center rounded-full bg-[var(--color-primary-soft)] px-4 py-2 text-xs font-bold text-[var(--color-primary)] md:text-sm">
             New {badgeLabel}
           </div>
         )}
       </div>
 
       <div className="mb-8 max-w-5xl">
-        <h1 className="text-5xl font-extrabold tracking-[-0.04em] text-[var(--color-text-primary)] md:text-6xl lg:text-7xl">
+        <h1 className="text-2xl font-extrabold tracking-[-0.03em] text-[var(--color-text-primary)] md:text-3xl lg:text-4xl">
           {title}
         </h1>
-        <p className="mt-4 max-w-3xl text-lg text-[var(--color-text-secondary)]">
+        <p className="mt-3 max-w-3xl text-base text-[var(--color-text-secondary)] md:text-lg">
           {subtitle}
         </p>
       </div>
@@ -65,7 +65,7 @@ const TaskForm = ({
       <div className="rounded-[34px] border border-[var(--color-border-strong)] bg-[var(--color-surface-elevated)] p-6 shadow-[var(--color-shadow-soft)] backdrop-blur-sm transition-all duration-300 md:p-7">
         <form onSubmit={onSubmit} className="space-y-7">
           <label className="flex flex-col gap-2">
-            <span className="text-2xl font-extrabold tracking-tight text-[var(--color-text-primary)]">
+            <span className="text-xl font-extrabold tracking-tight text-[var(--color-text-primary)] md:text-2xl">
               Task title
             </span>
             <input
@@ -76,12 +76,12 @@ const TaskForm = ({
               onChange={onChange}
               placeholder="Give this task a clear title"
               required
-              className="h-16 rounded-[24px] border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] px-5 text-xl text-[var(--color-text-primary)] outline-none transition duration-200 placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-primary)] focus:bg-white"
+              className="h-14 rounded-3xl border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] px-5 text-base text-[var(--color-text-primary)] outline-none transition duration-200 placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-primary)] focus:bg-white md:h-16 md:text-lg"
             />
           </label>
 
           <label className="flex flex-col gap-3">
-            <span className="text-2xl font-extrabold tracking-tight text-[var(--color-text-primary)]">
+            <span className="text-xl font-extrabold tracking-tight text-[var(--color-text-primary)] md:text-2xl">
               Description
             </span>
             <textarea
@@ -92,13 +92,13 @@ const TaskForm = ({
               placeholder="Add context, goals, or next steps"
               required
               rows={7}
-              className="rounded-[28px] border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] px-5 py-4 text-xl text-[var(--color-text-primary)] outline-none transition duration-200 placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-primary)] focus:bg-white"
+              className="rounded-[28px] border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] px-5 py-4 text-base text-[var(--color-text-primary)] outline-none transition duration-200 placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-primary)] focus:bg-white md:text-lg"
             />
           </label>
 
           <div className="grid gap-6 lg:grid-cols-[1.05fr_1fr]">
             <label className="flex flex-col gap-3">
-              <span className="text-2xl font-extrabold tracking-tight text-[var(--color-text-primary)]">
+              <span className="text-xl font-extrabold tracking-tight text-[var(--color-text-primary)] md:text-2xl">
                 Due date
               </span>
               <input
@@ -108,12 +108,12 @@ const TaskForm = ({
                 value={values.date}
                 onChange={onChange}
                 required
-                className="h-16 rounded-[24px] border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] px-5 text-xl text-[var(--color-text-primary)] outline-none transition duration-200 focus:border-[var(--color-primary)] focus:bg-white"
+                className="h-14 rounded-3xl border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] px-5 text-base text-[var(--color-text-primary)] outline-none transition duration-200 focus:border-[var(--color-primary)] focus:bg-white md:h-16 md:text-lg"
               />
             </label>
 
             <div className="flex flex-col gap-3">
-              <span className="text-2xl font-extrabold tracking-tight text-[var(--color-text-primary)]">
+              <span className="text-xl font-extrabold tracking-tight text-[var(--color-text-primary)] md:text-2xl">
                 Starting status
               </span>
               <div className="flex flex-wrap gap-3">
@@ -125,7 +125,7 @@ const TaskForm = ({
                       key={option.value}
                       type="button"
                       onClick={() => onStatusChange(option.value)}
-                      className={`inline-flex h-15 min-w-[124px] items-center justify-center rounded-full border px-6 text-lg font-bold transition duration-200 hover:-translate-y-0.5 ${
+                      className={`inline-flex h-[3.25rem] min-w-[7rem] items-center justify-center rounded-full border px-4 text-sm font-bold transition duration-200 hover:-translate-y-0.5 md:h-[3.5rem] md:min-w-[7.75rem] md:px-6 md:text-base ${
                         isActive
                           ? statusOptionClasses[option.value].active
                           : statusOptionClasses[option.value].idle
@@ -142,15 +142,15 @@ const TaskForm = ({
           <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end">
             <Link
               to="/dashboard"
-              className="inline-flex h-14 items-center justify-center px-2 text-xl font-bold text-[var(--color-text-secondary)] transition duration-200 hover:text-[var(--color-primary)]"
+              className="inline-flex h-12 items-center justify-center px-2 text-base font-bold text-[var(--color-text-secondary)] transition duration-200 hover:text-[var(--color-primary)] md:h-14 md:text-lg"
             >
               Cancel
             </Link>
             <button
               type="submit"
-              className="inline-flex h-14 cursor-pointer items-center justify-center gap-3 rounded-[22px] bg-[linear-gradient(180deg,#6f9fff_0%,var(--color-primary)_100%)] px-8 text-xl font-bold text-white shadow-[var(--color-shadow-pill)] transition duration-200 hover:-translate-y-1 hover:brightness-105"
+              className="inline-flex h-12 cursor-pointer items-center justify-center gap-3 rounded-[22px] bg-[linear-gradient(180deg,#6f9fff_0%,var(--color-primary)_100%)] px-6 text-base font-bold text-white shadow-[var(--color-shadow-pill)] transition duration-200 hover:-translate-y-1 hover:brightness-105 md:h-14 md:px-8 md:text-lg"
             >
-              <span className="text-2xl leading-none">+</span>
+              <span className="text-xl leading-none md:text-2xl">+</span>
               {submitLabel}
             </button>
           </div>

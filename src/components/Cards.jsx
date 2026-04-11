@@ -9,29 +9,25 @@ const Cards = ({ counts }) => {
       title: "Total Tasks",
       val: counts.total,
       icon: <FaTasks />,
-      color: "text-orange",
-      bgColor: "bg-[rgba(243,131,6,0.10)]",
+      tone: "total",
     },
     {
       title: "Pending",
       val: counts.pending,
       icon: <FaRegClock />,
-      color: "text-[var(--color-status-pending-text)]",
-      bgColor: "bg-[rgba(255,217,122,0.22)]",
+      tone: "pending",
     },
     {
       title: "In Progress",
       val: counts.inProgress,
       icon: <TbProgressCheck />,
-      color: "text-[var(--color-primary)]",
-      bgColor: "bg-[rgba(93,142,246,0.14)]",
+      tone: "progress",
     },
     {
       title: "Completed",
       val: counts.done,
       icon: <MdFileDownloadDone />,
-      color: "text-[var(--color-status-done-bg)]",
-      bgColor: "bg-[rgba(79,209,116,0.16)]",
+      tone: "completed",
     },
   ];
   return (
@@ -42,8 +38,7 @@ const Cards = ({ counts }) => {
           title={card.title}
           val={card.val}
           icon={card.icon}
-          color={card.color}
-          bgColor={card.bgColor}
+          tone={card.tone}
         />
       ))}
     </div>
