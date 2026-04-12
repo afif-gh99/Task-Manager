@@ -30,15 +30,25 @@ const NavBar = ({
   return (
     <>
       <div className="animate-fade-up flex w-full flex-col gap-4 rounded-[28px] bg-[var(--color-surface-elevated)] px-4 py-4 shadow-[var(--color-shadow-soft)] backdrop-blur-sm transition-transform duration-300 sm:px-5 lg:flex-row lg:items-center">
-        <div className="w-[10.5rem] shrink-0 sm:w-[12.5rem]">
-          <img
-            src={logoSrc}
-            alt={logoAlt}
-            className="w-full h-full object-contain"
-          />
+        <div className="flex items-center justify-between gap-3 lg:w-auto lg:shrink-0">
+          <div className="w-[9.5rem] shrink-0 sm:w-[11rem] lg:w-[12.5rem]">
+            <img
+              src={logoSrc}
+              alt={logoAlt}
+              className="h-full w-full object-contain"
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={handleLogoutClick}
+            className="h-10 shrink-0 cursor-pointer rounded-[18px] border border-[rgba(243,131,6,0.28)] bg-[rgba(243,131,6,0.10)] px-3 text-xs font-semibold text-[var(--color-orange)] transition duration-200 hover:-translate-y-0.5 hover:bg-[rgba(243,131,6,0.16)] sm:px-4 sm:text-sm lg:hidden"
+          >
+            {logoutText}
+          </button>
         </div>
 
-        <div className="flex-1">
+        <div className="w-full lg:flex-1">
           <input
             type="text"
             value={searchValue}
@@ -51,7 +61,7 @@ const NavBar = ({
         <button
           type="button"
           onClick={handleLogoutClick}
-          className="h-[3.25rem] shrink-0 cursor-pointer rounded-[22px] border border-[rgba(243,131,6,0.28)] bg-[rgba(243,131,6,0.10)] px-5 text-sm font-semibold text-[var(--color-orange)] transition duration-200 hover:-translate-y-0.5 hover:bg-[rgba(243,131,6,0.16)]"
+          className="hidden h-[3.25rem] shrink-0 cursor-pointer rounded-[22px] border border-[rgba(243,131,6,0.28)] bg-[rgba(243,131,6,0.10)] px-5 text-sm font-semibold text-[var(--color-orange)] transition duration-200 hover:-translate-y-0.5 hover:bg-[rgba(243,131,6,0.16)] lg:inline-flex lg:items-center lg:justify-center"
         >
           {logoutText}
         </button>

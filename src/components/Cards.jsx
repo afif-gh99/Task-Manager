@@ -31,7 +31,7 @@ const Cards = ({ counts }) => {
     },
   ];
   return (
-    <div className="mt-8 grid w-full grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-5">
+    <div className="mt-8 grid w-full grid-cols-2 gap-4 md:gap-5 lg:grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
       {cards.map((card, index) => (
         <Card
           key={index}
