@@ -182,6 +182,43 @@
   }
 }
 
+@keyframes card-ambient-wave {
+  0% {
+    transform: translate3d(-4%, -3%, 0) scale(1.02);
+    background-position: 0% 50%;
+    opacity: 0.34;
+  }
+
+  50% {
+    transform: translate3d(4%, 3%, 0) scale(1.08);
+    background-position: 100% 50%;
+    opacity: 0.48;
+  }
+
+  100% {
+    transform: translate3d(-3%, -1%, 0) scale(1.03);
+    background-position: 0% 50%;
+    opacity: 0.36;
+  }
+}
+
+@keyframes card-ambient-glow {
+  0% {
+    transform: translate3d(-6%, 5%, 0) scale(0.96);
+    opacity: 0.2;
+  }
+
+  50% {
+    transform: translate3d(5%, -4%, 0) scale(1.1);
+    opacity: 0.32;
+  }
+
+  100% {
+    transform: translate3d(-4%, 4%, 0) scale(1);
+    opacity: 0.22;
+  }
+}
+
 .animate-fade-up {
   animation: fade-up 420ms ease-out both;
 }
@@ -229,12 +266,67 @@
   filter: blur(10px);
 }
 
+.card-ambient {
+  will-change: transform, box-shadow;
+}
+
+.card-ambient-wave,
+.card-ambient-glow {
+  pointer-events: none;
+  transition:
+    opacity 320ms ease,
+    filter 320ms ease,
+    transform 320ms ease;
+  will-change: transform, opacity;
+}
+
+.card-ambient-wave {
+  opacity: 0.38;
+  background:
+    radial-gradient(circle at 18% 24%, rgba(255, 255, 255, 0.46) 0%, transparent 34%),
+    linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.28) 0%,
+      color-mix(in srgb, var(--ambient-color) 18%, transparent) 24%,
+      rgba(255, 255, 255, 0.12) 48%,
+      color-mix(in srgb, var(--ambient-color) 30%, transparent) 74%,
+      rgba(255, 255, 255, 0.2) 100%
+    );
+  background-size: 180% 180%;
+  animation: card-ambient-wave 6.8s ease-in-out infinite;
+}
+
+.card-ambient-glow {
+  opacity: 0.24;
+  background:
+    radial-gradient(circle at 28% 34%, rgba(255, 255, 255, 0.32) 0%, transparent 28%),
+    radial-gradient(
+      circle at 66% 58%,
+      color-mix(in srgb, var(--ambient-color) 34%, transparent) 0%,
+      transparent 54%
+    );
+  filter: blur(34px);
+  animation: card-ambient-glow 7.2s ease-in-out infinite;
+}
+
+.card-ambient:hover .card-ambient-wave {
+  opacity: 0.54;
+  filter: brightness(1.04);
+}
+
+.card-ambient:hover .card-ambient-glow {
+  opacity: 0.36;
+  filter: blur(38px) brightness(1.08);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .intro-loader-shell,
   .intro-logo-outline,
   .intro-logo-color,
   .intro-logo-glow,
-  .intro-logo-sheen {
+  .intro-logo-sheen,
+  .card-ambient-wave,
+  .card-ambient-glow {
     animation-duration: 1ms;
   }
 }
