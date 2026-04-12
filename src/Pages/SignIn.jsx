@@ -1,9 +1,11 @@
 import axios from "axios";
 import { useNavigate } from "react-router";
+import { useIntroLoader } from "../components/AppEntry";
 import Sign from "../components/Sign";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { playIntro } = useIntroLoader();
 
   const loginFields = [
     {
@@ -25,11 +27,13 @@ const Login = () => {
     //   const res = await axios.post("LOGIN_API", data);
     //   localStorage.setItem("token", res.data.token);
     //   localStorage.setItem("user", JSON.stringify(res.data.user));
+    //   await playIntro();
     //   navigate("/dashboard");
     // } catch (error) {
     //   console.log(error);
     // }
 
+    await playIntro();
     navigate("/dashboard");
   };
 

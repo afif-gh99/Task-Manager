@@ -1,13 +1,14 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { createBrowserRouter } from "react-router";
 import Root from "./Pages/Root";
 import SignIn from "./Pages/SignIn";
 import SignUp from "./Pages/SignUp";
 import Dashboard from "./Pages/Dashboard";
 import CreateTask from "./Pages/CreateTask";
 import EditTask from "./Pages/EditTask";
+import AppEntry from "./components/AppEntry";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,6 @@ const router = createBrowserRouter([
 ]);
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AppEntry router={router} />
   </StrictMode>,
 );
