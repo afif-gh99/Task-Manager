@@ -24,7 +24,7 @@ const ConfirmModal = ({
 
   return (
     <div className="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-[rgba(20,28,58,0.42)] px-4 py-6 backdrop-blur-[4px]">
-      <div className="animate-modal-pop w-full max-w-md rounded-[30px] border border-[var(--color-border-strong)] bg-[var(--color-surface-primary)] p-6 shadow-[0_28px_80px_rgba(31,40,88,0.18)] sm:p-7">
+      <div className="animate-modal-pop flex flex-col items-center w-full max-w-md rounded-[30px] border border-[var(--color-border-strong)] bg-[var(--color-surface-primary)] p-6 shadow-[0_28px_80px_rgba(31,40,88,0.18)] sm:p-7">
         <div
           className={`mb-5 flex h-14 w-14 items-center justify-center rounded-2xl text-2xl ${toneClasses.iconWrap}`}
         >

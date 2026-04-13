@@ -1,14 +1,8 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { RouterProvider } from "react-router";
 import IntroLoader from "./IntroLoader";
 
-const DEFAULT_INTRO_DURATION = 2000;
+const DEFAULT_INTRO_DURATION = 3000;
 const IntroLoaderContext = createContext({
   playIntro: async () => {},
 });
@@ -21,9 +15,8 @@ const AppEntry = ({
   introDuration = DEFAULT_INTRO_DURATION,
   isAppReady = true,
 }) => {
-  const [hasMinimumDelayElapsed, setHasMinimumDelayElapsed] = useState(
-    !showIntro,
-  );
+  const [hasMinimumDelayElapsed, setHasMinimumDelayElapsed] =
+    useState(!showIntro);
   const [isInitialIntroVisible, setIsInitialIntroVisible] = useState(showIntro);
   const [isTransitionIntroVisible, setIsTransitionIntroVisible] =
     useState(false);

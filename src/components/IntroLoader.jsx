@@ -1,6 +1,6 @@
 const IntroLoader = ({
   duration = 2000,
-  logoSrc = "/assets/proteam-text.png",
+  logoSrc = "/assets/logo-dark.png",
   logoAlt = "ProTeam",
 }) => {
   return (
