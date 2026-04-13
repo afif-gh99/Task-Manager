@@ -38,43 +38,84 @@ const EditTask = () => {
 
   if (!selectedTask) {
     return (
-      <div className="font-cairo min-h-screen bg-[radial-gradient(circle_at_top_left,var(--color-page-glow),transparent_32%),radial-gradient(circle_at_top_right,rgba(255,221,185,0.25),transparent_28%),var(--color-page-bg)] px-4 py-5 sm:px-6 md:px-10 lg:px-16 lg:py-7">
-        <div className="mt-8 rounded-[34px] border border-[var(--color-border-strong)] bg-[var(--color-surface-elevated)] p-8 text-center shadow-[var(--color-shadow-soft)]">
-          <h1 className="text-3xl font-extrabold text-[var(--color-text-primary)]">
-            Task Not Found
-          </h1>
-          <p className="mt-3 text-sm text-[var(--color-text-secondary)]">
-            This temporary edit page could not match the task id from the local
-            fake data source.
-          </p>
-          <Link
-            to="/dashboard"
-            className="mt-6 inline-flex h-12 items-center justify-center rounded-2xl bg-[var(--color-primary)] px-6 text-sm font-semibold text-white transition hover:brightness-95"
-          >
-            Back to Dashboard
-          </Link>
+      <div className="page-enter font-cairo relative min-h-screen overflow-x-clip bg-[var(--page-background)]">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+          <div
+            className="absolute inset-x-0 top-0 h-[30rem]"
+            style={{ background: "var(--page-shell-top-wash)" }}
+          />
+          <div
+            className="absolute left-[-8rem] top-[-4rem] h-[28rem] w-[28rem] rounded-full blur-[128px]"
+            style={{ backgroundColor: "var(--page-shell-primary-glow)" }}
+          />
+          <div
+            className="absolute right-[-7rem] top-[4rem] h-[24rem] w-[24rem] rounded-full blur-[120px]"
+            style={{ backgroundColor: "var(--page-shell-warm-glow)" }}
+          />
+        </div>
+
+        <div className="relative z-10 mx-auto w-full max-w-[72rem] px-4 py-4 sm:px-6 md:px-8 lg:px-10 lg:py-6">
+          <div className="premium-panel mt-6 rounded-[32px] px-6 py-7 text-center sm:px-8">
+            <div className="relative z-10">
+              <h1 className="text-3xl font-black tracking-[-0.04em] text-[var(--text-strong)]">
+                Task Not Found
+              </h1>
+              <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)] sm:text-base">
+                This task is not available.
+              </p>
+              <div className="mt-5 flex justify-center">
+                <Link
+                  to="/dashboard"
+                  className="ui-btn-secondary min-h-11 px-6 text-sm md:text-[0.95rem]"
+                >
+                  Back to Dashboard
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="font-cairo min-h-screen bg-[radial-gradient(circle_at_top_left,var(--color-page-glow),transparent_32%),radial-gradient(circle_at_top_right,rgba(255,221,185,0.25),transparent_28%),var(--color-page-bg)] px-4 py-5 sm:px-6 md:px-10 lg:px-16 lg:py-7">
-      <TaskForm
-        title="Refine the task before it ships."
-        subtitle="Tighten the title, adjust the timeline, and keep the next step clear for the team."
-        submitLabel="Update task"
-        badgeLabel="Edit task"
-        values={formValues}
-        onChange={handleChange}
-        onStatusChange={(status) =>
-          setFormValues((currentValues) => ({
-            ...currentValues,
-            status,
-          }))
-        }
-        onSubmit={handleSubmit}
-      />
+    <div className="page-enter font-cairo relative min-h-screen overflow-x-clip bg-[var(--page-background)]">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <div
+          className="absolute inset-x-0 top-0 h-[30rem]"
+          style={{ background: "var(--page-shell-top-wash)" }}
+        />
+        <div
+          className="absolute left-[-8rem] top-[-4rem] h-[28rem] w-[28rem] rounded-full blur-[128px]"
+          style={{ backgroundColor: "var(--page-shell-primary-glow)" }}
+        />
+        <div
+          className="absolute right-[-7rem] top-[4rem] h-[24rem] w-[24rem] rounded-full blur-[120px]"
+          style={{ backgroundColor: "var(--page-shell-warm-glow)" }}
+        />
+        <div className="premium-grid absolute inset-0 opacity-24 [mask-image:linear-gradient(to_bottom,black,transparent_80%)]" />
+      </div>
+
+      <div className="relative z-10 mx-auto w-full max-w-[78rem] px-4 py-4 sm:px-6 md:px-8 lg:px-10 lg:py-5">
+        <TaskForm
+          eyebrow="Edit"
+          title="Edit task"
+          subtitle="Update the task and keep it moving."
+          submitLabel="Update task"
+          badgeLabel="Edit"
+          insightLabel="Task"
+          insightTitle="Ready to update"
+          values={formValues}
+          onChange={handleChange}
+          onStatusChange={(status) =>
+            setFormValues((currentValues) => ({
+              ...currentValues,
+              status,
+            }))
+          }
+          onSubmit={handleSubmit}
+        />
+      </div>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useNavigate } from "react-router";
 import { useIntroLoader } from "../components/AppEntry";
 import Sign from "../components/Sign";
@@ -10,13 +9,17 @@ const Login = () => {
   const loginFields = [
     {
       name: "email",
+      label: "Email address",
       type: "email",
       placeholder: "Email Address",
+      autoComplete: "email",
     },
     {
       name: "password",
+      label: "Password",
       type: "password",
       placeholder: "Password",
+      autoComplete: "current-password",
     },
   ];
 
@@ -49,17 +52,35 @@ const Login = () => {
 
   return (
     <Sign
-      title="Welcome back!"
-      subtitle="Sign in to get started with your dashboard"
+      eyebrow="Sign In"
+      title="Welcome back to your workspace."
+      subtitle="Pick up where you left off."
       fields={loginFields}
       buttonText="Sign In"
-      bottomText="Dont have an account?"
+      bottomText="Don't have an account?"
       bottomLinkText="Sign Up"
       bottomLinkTo="/signup"
       onSubmit={handleLogin}
       showForgotPassword={true}
       onGoogleClick={handleGoogleClick}
       onFacebookClick={handleFacebookClick}
+      heroBadge="Focused Workflow"
+      heroTitle="Stay on top of every task."
+      heroDescription="A calm place to return to your work."
+      heroStats={[
+        {
+          label: "Focus",
+          value: "24/7",
+        },
+        {
+          label: "Flow",
+          value: "3x",
+        },
+      ]}
+      heroHighlights={[
+        "Clear task flow",
+        "Fast status updates",
+      ]}
     />
   );
 };

@@ -6,32 +6,40 @@ import Card from "./Card";
 const Cards = ({ counts }) => {
   const cards = [
     {
-      title: "Total Tasks",
+      title: "Total",
       val: counts.total,
       icon: <FaTasks />,
       tone: "total",
+      eyebrow: "Portfolio",
+      support: "All tracked",
     },
     {
       title: "Pending",
       val: counts.pending,
       icon: <FaRegClock />,
       tone: "pending",
+      eyebrow: "Attention",
+      support: "Waiting to start",
     },
     {
       title: "In Progress",
       val: counts.inProgress,
       icon: <TbProgressCheck />,
       tone: "progress",
+      eyebrow: "Momentum",
+      support: "Currently moving",
     },
     {
-      title: "Completed",
+      title: "Done",
       val: counts.done,
       icon: <MdFileDownloadDone />,
       tone: "completed",
+      eyebrow: "Delivered",
+      support: "Closed out",
     },
   ];
   return (
-    <div className="mt-8 grid w-full grid-cols-2 gap-4 md:gap-5 lg:grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
+    <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:gap-4 xl:grid-cols-4">
       {cards.map((card, index) => (
         <Card
           key={index}
@@ -39,6 +47,9 @@ const Cards = ({ counts }) => {
           val={card.val}
           icon={card.icon}
           tone={card.tone}
+          eyebrow={card.eyebrow}
+          support={card.support}
+          animationDelay={index * 70}
         />
       ))}
     </div>
