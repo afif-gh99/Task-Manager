@@ -1,27 +1,22 @@
 import { useNavigate } from "react-router";
-import {
-  TASK_STATUS,
-  getTaskStatusLabel,
-  normalizeTaskStatus,
-} from "../constants/taskStatus";
 import TaskRow from "./TaskRow";
 
 const statusConfig = {
-  [TASK_STATUS.PENDING]: {
-    label: getTaskStatusLabel(TASK_STATUS.PENDING),
-    nextStatus: TASK_STATUS.IN_PROGRESS,
+  Pending: {
+    label: "Pending",
+    nextStatus: "In progress",
     pillClassName:
       "bg-[var(--color-status-pending-bg)] text-[var(--color-status-pending-text)] shadow-[0_10px_28px_rgba(255,217,122,0.35)] hover:brightness-95",
   },
-  [TASK_STATUS.IN_PROGRESS]: {
-    label: getTaskStatusLabel(TASK_STATUS.IN_PROGRESS),
-    nextStatus: TASK_STATUS.DONE,
+  "In progress": {
+    label: "In Progress",
+    nextStatus: "Done",
     pillClassName:
       "bg-[var(--color-status-progress-bg)] text-[var(--color-status-progress-text)] shadow-[var(--color-shadow-pill)] hover:brightness-95",
   },
-  [TASK_STATUS.DONE]: {
-    label: getTaskStatusLabel(TASK_STATUS.DONE),
-    nextStatus: TASK_STATUS.PENDING,
+  Done: {
+    label: "Done",
+    nextStatus: "Pending",
     pillClassName:
       "bg-[var(--color-status-done-bg)] text-[var(--color-status-done-text)] shadow-[0_10px_28px_rgba(79,209,116,0.28)] hover:brightness-95",
   },
@@ -29,7 +24,7 @@ const statusConfig = {
 
 const defaultStatusMeta = {
   label: "Unknown",
-  nextStatus: TASK_STATUS.PENDING,
+  nextStatus: "Pending",
   pillClassName:
     "bg-[var(--color-surface-muted)] text-[var(--color-text-muted)] shadow-[var(--color-shadow-soft)] hover:brightness-95",
 };
@@ -89,9 +84,7 @@ const TasksTable = ({
 
           <tbody>
             {tasks.map((task) => {
-              const normalizedStatus = normalizeTaskStatus(task.status);
-              const statusMeta =
-                statusConfig[normalizedStatus] ?? defaultStatusMeta;
+              const statusMeta = statusConfig[task.status] ?? defaultStatusMeta;
 
               return (
                 <TaskRow

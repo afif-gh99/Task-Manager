@@ -1,13 +1,13 @@
 // This page handles the sign-in flow.
 // It validates the form, calls the login endpoint, stores auth data,
 // then redirects the user to the dashboard.
+import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import Sign from "../components/Sign";
-import { getApiErrorMessage } from "../lib/api/getApiErrorMessage";
-import { authService } from "../services/authService";
-import { tokenStorage, userStorage } from "../lib/auth/tokenStorage";
+
+const API_BASE_URL = "https://taskmanager.proteam-syria.com/api";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -48,17 +48,21 @@ const Login = () => {
         password: data.password,
       };
 
-      const session = await authService.login(requestBody);
+      const response = await axios.post(`${API_BASE_URL}/login`, requestBody, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-      // Save auth state locally so protected task requests can attach the token.
-      tokenStorage.setToken(session?.Token);
-      userStorage.setUser(session?.User);
-      toast.success(session?.message || "Signed in successfully.");
+      localStorage.setItem("token", response.data?.Token ?? "");
+      localStorage.setItem("user", JSON.stringify(response.data?.User ?? null));
+      toast.success(response.data?.message || "Signed in successfully.");
       navigate("/dashboard");
-    } catch (error) {
-      toast.error(
-        getApiErrorMessage(error, "We could not sign you in right now."),
-      );
+    } catch (err) {
+      const serverMsg = err.response?.data?.message;
+
+      toast.error(serverMsg || "We could not sign you in right now.");
+      console.log(err);
     } finally {
       setIsSubmitting(false);
     }

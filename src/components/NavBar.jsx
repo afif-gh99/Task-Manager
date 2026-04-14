@@ -2,7 +2,6 @@ import { useNavigate } from "react-router";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import ConfirmModal from "./ConfirmModal";
-import { authService } from "../services/authService";
 
 const NavBar = ({
   logoSrc,
@@ -20,7 +19,8 @@ const NavBar = ({
   };
 
   const handleConfirmLogout = () => {
-    authService.logout();
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     toast.success("Logged out successfully.");
     setLogoutPending(false);
     navigate("/signin");

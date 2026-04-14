@@ -1,13 +1,14 @@
 // This page edits an existing task.
 // It loads the selected task, hydrates the shared form, then sends
 // an update request when the user saves their changes.
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
 import TaskForm from "../components/TaskForm";
 import { emptyTaskFormValues } from "../constants/taskForm";
-import { getApiErrorMessage } from "../lib/api/getApiErrorMessage";
-import { taskService } from "../services/taskService";
+
+const API_BASE_URL = "https://taskmanager.proteam-syria.com/api";
 
 const EditTask = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const EditTask = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Initial load:
-  // fetch the task by id, normalize it in the service, then copy it into form state.
+  // fetch the task by id, then copy the backend values into local form state.
   useEffect(() => {
     let isMounted = true;
 
@@ -27,8 +28,12 @@ const EditTask = () => {
       setIsLoadingTask(true);
 
       try {
-        const response = await taskService.getTaskById(taskId);
-        const task = response?.data ?? response;
+        const response = await axios.get(`${API_BASE_URL}/tasks/${taskId}`, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+        const task = response.data?.data ?? response.data;
 
         if (!isMounted) {
           return;
@@ -44,11 +49,12 @@ const EditTask = () => {
             status: task.status ?? emptyTaskFormValues.status,
           });
         }
-      } catch (error) {
+      } catch (err) {
         if (isMounted) {
-          toast.error(
-            getApiErrorMessage(error, "We could not load this task right now."),
-          );
+          const serverMsg = err.response?.data?.message;
+
+          toast.error(serverMsg || "We could not load this task right now.");
+          console.log(err);
           setSelectedTask(null);
         }
       } finally {
@@ -92,7 +98,6 @@ const EditTask = () => {
     setIsSubmitting(true);
 
     try {
-      // The service maps the UI status to the backend value before sending.
       const requestBody = {
         title: formValues.title,
         description: formValues.description,
@@ -100,13 +105,24 @@ const EditTask = () => {
         status: formValues.status,
       };
 
-      const response = await taskService.updateTask(taskId, requestBody);
-      toast.success(response?.message || "Task updated successfully.");
-      navigate("/dashboard");
-    } catch (error) {
-      toast.error(
-        getApiErrorMessage(error, "We could not update this task right now."),
+      const response = await axios.put(
+        `${API_BASE_URL}/tasks/${taskId}`,
+        requestBody,
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+            "Content-Type": "application/json",
+          },
+        },
       );
+
+      toast.success(response.data?.message || "Task updated successfully.");
+      navigate("/dashboard");
+    } catch (err) {
+      const serverMsg = err.response?.data?.message;
+
+      toast.error(serverMsg || "We could not update this task right now.");
+      console.log(err);
     } finally {
       setIsSubmitting(false);
     }

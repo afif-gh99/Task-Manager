@@ -1,48 +1,41 @@
 // This page is the main authenticated dashboard.
-// It loads tasks and stats, keeps task actions in sync with the API,
-// and passes normalized data into the dashboard UI components.
+// It loads tasks and stats directly with axios, keeps task actions in sync
+// with the API, and passes that data into the dashboard UI components.
+import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
 import { useOutletContext } from "react-router";
 import { toast } from "react-toastify";
 import Cards from "../components/Cards";
 import ConfirmModal from "../components/ConfirmModal";
 import TasksTable from "../components/TasksTable";
-import {
-  getTaskCounts,
-  normalizeTaskListForUi,
-  normalizeTaskStats,
-} from "../constants/taskStatus";
-import { getApiErrorMessage } from "../lib/api/getApiErrorMessage";
-import { userStorage } from "../lib/auth/tokenStorage";
-import { taskService } from "../services/taskService";
+
+const API_BASE_URL = "https://taskmanager.proteam-syria.com/api";
+
+const EMPTY_TASK_STATS = {
+  total: 0,
+  pending: 0,
+  inProgress: 0,
+  done: 0,
+};
 
 const Dashboard = () => {
-  const {
-    searchQuery = "",
-    startupTasks = null,
-    startupStats = null,
-    startupError = "",
-  } = useOutletContext() ?? {};
+  const { searchQuery = "" } = useOutletContext() ?? {};
   // Dashboard state:
   // - tasks/stats hold normalized data used by cards and the table
   // - loading flags control startup and refresh UX
   // - action ids let the table show lightweight pending states per row
-  const [tasks, setTasks] = useState(() =>
-    normalizeTaskListForUi(startupTasks),
-  );
-  const [stats, setStats] = useState(() => normalizeTaskStats(startupStats));
-  const [isLoading, setIsLoading] = useState(
-    !Array.isArray(startupTasks) && !startupError,
-  );
+  const [tasks, setTasks] = useState([]);
+  const [stats, setStats] = useState(EMPTY_TASK_STATS);
+  const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(startupError);
+  const [errorMessage, setErrorMessage] = useState("");
   const [taskPendingDelete, setTaskPendingDelete] = useState(null);
   const [updatingTaskId, setUpdatingTaskId] = useState(null);
   const [deletingTaskId, setDeletingTaskId] = useState(null);
 
   // Re-fetches dashboard data after deletes or other manual refresh points.
   const loadDashboardData = async () => {
-    if (tasks.length === 0 && !stats) {
+    if (isLoading) {
       setIsLoading(true);
     } else {
       setIsRefreshing(true);
@@ -50,55 +43,56 @@ const Dashboard = () => {
     setErrorMessage("");
 
     try {
-      const tasksResponse = await taskService.getTasks();
-      const statsResponse = await taskService.getStats();
-      const nextTasks = normalizeTaskListForUi(tasksResponse?.data);
-      const nextStats = normalizeTaskStats(
-        statsResponse?.data ?? statsResponse,
-      );
+      const token = localStorage.getItem("token");
+      const tasksResponse = await axios.get(`${API_BASE_URL}/tasks`, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      const statsResponse = await axios.get(`${API_BASE_URL}/tasks/stats`, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      const nextTasks = tasksResponse.data?.data ?? [];
+      const nextStats = statsResponse.data?.data ?? EMPTY_TASK_STATS;
 
       setTasks(nextTasks);
       setStats(nextStats);
-    } catch (error) {
+    } catch (err) {
+      const serverMsg = err.response?.data?.message;
+
       setTasks([]);
-      setStats(null);
-      setErrorMessage(
-        getApiErrorMessage(
-          error,
-          "We could not load your dashboard right now.",
-        ),
-      );
+      setStats(EMPTY_TASK_STATS);
+      setErrorMessage(serverMsg || "We could not load your dashboard right now.");
+      console.log(err);
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
     }
   };
 
-  // Initial data flow:
-  // 1. use bootstrapped data if AppEntry already loaded it
-  // 2. otherwise fetch tasks and stats here
+  // Initial dashboard load:
+  // this page now owns its own startup requests so the data flow stays local
+  // and easier to follow.
   useEffect(() => {
     let isMounted = true;
 
-    if (Array.isArray(startupTasks) || startupError) {
-      setTasks(normalizeTaskListForUi(startupTasks));
-      setStats(normalizeTaskStats(startupStats));
-      setErrorMessage(startupError);
-      setIsLoading(false);
-
-      return () => {
-        isMounted = false;
-      };
-    }
-
     const loadDashboardDataOnce = async () => {
       try {
-        const tasksResponse = await taskService.getTasks();
-        const statsResponse = await taskService.getStats();
-        const nextTasks = normalizeTaskListForUi(tasksResponse?.data);
-        const nextStats = normalizeTaskStats(
-          statsResponse?.data ?? statsResponse,
-        );
+        const token = localStorage.getItem("token");
+        const tasksResponse = await axios.get(`${API_BASE_URL}/tasks`, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+        const statsResponse = await axios.get(`${API_BASE_URL}/tasks/stats`, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+        const nextTasks = tasksResponse.data?.data ?? [];
+        const nextStats = statsResponse.data?.data ?? EMPTY_TASK_STATS;
 
         if (!isMounted) {
           return;
@@ -107,16 +101,16 @@ const Dashboard = () => {
         setTasks(nextTasks);
         setStats(nextStats);
         setErrorMessage("");
-      } catch (error) {
+      } catch (err) {
         if (isMounted) {
+          const serverMsg = err.response?.data?.message;
+
           setTasks([]);
-          setStats(null);
+          setStats(EMPTY_TASK_STATS);
           setErrorMessage(
-            getApiErrorMessage(
-              error,
-              "We could not load your dashboard right now.",
-            ),
+            serverMsg || "We could not load your dashboard right now.",
           );
+          console.log(err);
         }
       } finally {
         if (isMounted) {
@@ -130,9 +124,15 @@ const Dashboard = () => {
     return () => {
       isMounted = false;
     };
-  }, [startupError, startupStats, startupTasks]);
+  }, []);
 
   const normalizedSearchQuery = searchQuery.trim().toLowerCase();
+  const {
+    total = 0,
+    pending = 0,
+    in_progress = 0,
+    done = 0,
+  } = stats || {};
 
   // Search only filters the already-loaded tasks in memory.
   const filteredTasks = useMemo(() => {
@@ -145,21 +145,16 @@ const Dashboard = () => {
     );
   }, [normalizedSearchQuery, tasks]);
 
-  // Prefer counts derived from the normalized task list.
-  // If the task list is empty, fall back to normalized stats from the API.
-  const counts = useMemo(() => {
-    const taskCounts = getTaskCounts(tasks);
-
-    if (taskCounts.total > 0) {
-      return taskCounts;
-    }
-
-    return normalizeTaskStats(stats);
-  }, [stats, tasks]);
-
   // Read the stored authenticated user so the task section can greet them.
   const welcomeMessage = useMemo(() => {
-    const storedUser = userStorage.getUser();
+    let storedUser = null;
+
+    try {
+      storedUser = JSON.parse(localStorage.getItem("user") ?? "null");
+    } catch {
+      storedUser = null;
+    }
+
     const userName =
       storedUser?.name ?? storedUser?.Name ?? storedUser?.userName ?? "";
 
@@ -180,27 +175,40 @@ const Dashboard = () => {
 
     try {
       setUpdatingTaskId(taskId);
-      const response = await taskService.updateTask(taskId, {
-        ...currentTask,
-        status: nextStatus,
-      });
+      const token = localStorage.getItem("token");
+      const response = await axios.put(
+        `${API_BASE_URL}/tasks/${taskId}`,
+        {
+          ...currentTask,
+          status: nextStatus,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-      // Keep tasks and counts in sync after a successful status change.
+      // Keep the row UI immediate, then re-sync the cards from backend stats.
       setTasks((currentTasks) => {
-        const nextTasks = currentTasks.map((task) =>
+        return currentTasks.map((task) =>
           task.id === taskId ? { ...task, status: nextStatus } : task,
         );
-
-        setStats(getTaskCounts(nextTasks));
-
-        return nextTasks;
       });
+      const statsResponse = await axios.get(`${API_BASE_URL}/tasks/stats`, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      setStats(statsResponse.data?.data ?? EMPTY_TASK_STATS);
 
-      toast.success(response?.message || "Task updated successfully.");
-    } catch (error) {
-      toast.error(
-        getApiErrorMessage(error, "We could not update this task right now."),
-      );
+      toast.success(response.data?.message || "Task updated successfully.");
+    } catch (err) {
+      const serverMsg = err.response?.data?.message;
+
+      toast.error(serverMsg || "We could not update this task right now.");
+      console.log(err);
     } finally {
       setUpdatingTaskId(null);
     }
@@ -221,15 +229,23 @@ const Dashboard = () => {
 
     try {
       setDeletingTaskId(taskPendingDelete.id);
-      const response = await taskService.deleteTask(taskPendingDelete.id);
+      const response = await axios.delete(
+        `${API_BASE_URL}/tasks/${taskPendingDelete.id}`,
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        },
+      );
 
       setTaskPendingDelete(null);
-      toast.success(response?.message || "Task deleted successfully.");
+      toast.success(response.data?.message || "Task deleted successfully.");
       await loadDashboardData();
-    } catch (error) {
-      toast.error(
-        getApiErrorMessage(error, "We could not delete this task right now."),
-      );
+    } catch (err) {
+      const serverMsg = err.response?.data?.message;
+
+      toast.error(serverMsg || "We could not delete this task right now.");
+      console.log(err);
     } finally {
       setDeletingTaskId(null);
     }
@@ -237,7 +253,14 @@ const Dashboard = () => {
 
   return (
     <div>
-      <Cards counts={counts} />
+      <Cards
+        counts={{
+          total,
+          pending,
+          inProgress: in_progress,
+          done,
+        }}
+      />
       {/* Page-level loading is used after the initial app loader is gone. */}
       {isLoading && (
         <div className="mt-8 rounded-[34px] border border-(--color-border-strong) bg-(--color-surface-elevated) px-6 py-8 text-center text-base font-semibold text-(--color-text-secondary) shadow-(--color-shadow-soft)">

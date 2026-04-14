@@ -1,12 +1,13 @@
 // This page handles user registration.
 // It prepares the signup payload, shows toast feedback, and redirects
 // the user to the sign-in page after a successful account creation.
+import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import Sign from "../components/Sign";
-import { getApiErrorMessage } from "../lib/api/getApiErrorMessage";
-import { authService } from "../services/authService";
+
+const API_BASE_URL = "https://taskmanager.proteam-syria.com/api";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -64,13 +65,23 @@ const Signup = () => {
         password_confirmation: data.confirmPassword,
       };
 
-      const response = await authService.register(requestBody);
-      toast.success(response?.message || "Account created successfully.");
-      navigate("/signin");
-    } catch (error) {
-      toast.error(
-        getApiErrorMessage(error, "We could not create your account right now."),
+      const response = await axios.post(
+        `${API_BASE_URL}/register`,
+        requestBody,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
       );
+
+      toast.success(response.data?.message || "Account created successfully.");
+      navigate("/signin");
+    } catch (err) {
+      const serverMsg = err.response?.data?.message;
+
+      toast.error(serverMsg || "We could not create your account right now.");
+      console.log(err);
     } finally {
       setIsSubmitting(false);
     }

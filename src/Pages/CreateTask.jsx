@@ -1,13 +1,14 @@
 // This page creates a new task.
 // It owns the task form state, validates required fields, sends the create
 // request, and redirects back to the dashboard after success.
+import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import TaskForm from "../components/TaskForm";
 import { emptyTaskFormValues } from "../constants/taskForm";
-import { getApiErrorMessage } from "../lib/api/getApiErrorMessage";
-import { taskService } from "../services/taskService";
+
+const API_BASE_URL = "https://taskmanager.proteam-syria.com/api";
 
 const CreateTask = () => {
   const navigate = useNavigate();
@@ -46,7 +47,6 @@ const CreateTask = () => {
     setIsSubmitting(true);
 
     try {
-      // The service will map UI status values before sending them to the API.
       const requestBody = {
         title: formValues.title,
         description: formValues.description,
@@ -54,13 +54,20 @@ const CreateTask = () => {
         status: formValues.status,
       };
 
-      const response = await taskService.createTask(requestBody);
-      toast.success(response?.message || "Task created successfully.");
+      const response = await axios.post(`${API_BASE_URL}/tasks`, requestBody, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+          "Content-Type": "application/json",
+        },
+      });
+
+      toast.success(response.data?.message || "Task created successfully.");
       navigate("/dashboard");
-    } catch (error) {
-      toast.error(
-        getApiErrorMessage(error, "We could not create this task right now."),
-      );
+    } catch (err) {
+      const serverMsg = err.response?.data?.message;
+
+      toast.error(serverMsg || "We could not create this task right now.");
+      console.log(err);
     } finally {
       setIsSubmitting(false);
     }

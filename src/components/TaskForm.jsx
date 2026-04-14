@@ -14,23 +14,23 @@ const TaskForm = ({
   isSubmitting = false,
 }) => {
   const statusOptions = [
-    { value: "pending", label: "Pending" },
-    { value: "in-progress", label: "In Progress" },
-    { value: "done", label: "Done" },
+    { value: "Pending", label: "Pending" },
+    { value: "In progress", label: "In Progress" },
+    { value: "Done", label: "Done" },
   ];
 
   const statusOptionClasses = {
-    pending: {
+    Pending: {
       active:
         "border-[rgba(255,217,122,0.45)] bg-[rgba(255,217,122,0.22)] text-[var(--color-status-pending-text)] shadow-[0_10px_28px_rgba(255,217,122,0.25)]",
       idle: "border-[rgba(255,217,122,0.35)] bg-[rgba(255,217,122,0.10)] text-[var(--color-status-pending-text)]",
     },
-    "in-progress": {
+    "In progress": {
       active:
         "border-[rgba(93,142,246,0.35)] bg-[var(--color-primary-soft)] text-[var(--color-primary)] shadow-[var(--color-shadow-pill)]",
       idle: "border-[rgba(93,142,246,0.28)] bg-[rgba(93,142,246,0.08)] text-[var(--color-primary)]",
     },
-    done: {
+    Done: {
       active:
         "border-[rgba(79,209,116,0.35)] bg-[rgba(79,209,116,0.18)] text-[var(--color-status-done-bg)] shadow-[0_10px_28px_rgba(79,209,116,0.22)]",
       idle: "border-[rgba(79,209,116,0.28)] bg-[rgba(79,209,116,0.08)] text-[var(--color-status-done-bg)]",
