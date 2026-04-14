@@ -13,16 +13,6 @@ import IntroLoader from "./IntroLoader";
 
 const MINIMUM_LOADER_DURATION = 2000;
 
-// Reads the preferred mode from storage so shared UI like Toastify
-// can match the current light/dark appearance.
-const getStoredMode = () => {
-  try {
-    return localStorage.getItem("mode") === "dark" ? "dark" : "light";
-  } catch {
-    return "light";
-  }
-};
-
 const preloadImage = (src) =>
   new Promise((resolve) => {
     const image = new Image();
@@ -51,16 +41,10 @@ const getCriticalAssetPaths = ({ pathname, hasToken }) => {
   return ["/assets/proteamLogo.png", "/assets/photo1.png"];
 };
 
-const AppEntry = ({
-  router,
-  showIntro = true,
-  isAppReady = true,
-}) => {
+const AppEntry = ({ router, showIntro = true, isAppReady = true }) => {
   // Top-level startup state:
-  // - toastTheme controls global toast appearance
   // - minimumLoaderTimePassed keeps the intro visible briefly
   // - bootstrapState tracks real app readiness and initial dashboard data
-  const [toastTheme, setToastTheme] = useState(getStoredMode);
   const [minimumLoaderTimePassed, setMinimumLoaderTimePassed] =
     useState(!showIntro);
   const [bootstrapState, setBootstrapState] = useState({
@@ -172,19 +156,6 @@ const AppEntry = ({
   }, [isAppReady, router, showIntro]);
 
   // Listen for mode changes so toast styling updates if the theme changes later.
-  useEffect(() => {
-    const syncToastTheme = () => {
-      setToastTheme(getStoredMode());
-    };
-
-    syncToastTheme();
-    window.addEventListener("storage", syncToastTheme);
-
-    return () => {
-      window.removeEventListener("storage", syncToastTheme);
-    };
-  }, []);
-
   // The loader hides only after the app is really ready and the short
   // minimum visibility window has passed.
   const shouldShowIntroLoader =

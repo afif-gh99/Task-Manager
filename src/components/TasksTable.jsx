@@ -51,16 +51,16 @@ const TasksTable = ({
 
   return (
     <section
-      className={`animate-fade-up mt-8 overflow-hidden rounded-[34px] border border-[var(--color-border-strong)] bg-[var(--color-surface-elevated)] shadow-[var(--color-shadow-soft)] backdrop-blur-sm transition-all duration-300 ${
+      className={`animate-fade-up mt-8 overflow-hidden rounded-[34px] border border-(--color-border-strong) bg-(--color-surface-elevated) shadow-(--color-shadow-soft) backdrop-blur-sm transition-all duration-300 ${
         isRefreshing ? "opacity-90" : "opacity-100"
       }`}
     >
       <div className="flex flex-col gap-4 px-6 py-6 sm:flex-row sm:items-center sm:justify-between md:px-7">
         <div>
-          <p className="mb-1 text-sm font-bold tracking-[0.01em] text-[var(--color-text-secondary)] md:text-xl">
+          <p className="mb-1 text-sm font-bold tracking-[0.01em] text-(--color-text-secondary) md:text-xl">
             {welcomeMessage}
           </p>
-          <h2 className="text-3xl font-extrabold tracking-tight text-[var(--color-text-primary)] md:text-4xl">
+          <h2 className="text-3xl font-extrabold tracking-tight text-(--color-text-primary) md:text-4xl">
             My tasks
           </h2>
         </div>
@@ -68,7 +68,7 @@ const TasksTable = ({
         <button
           type="button"
           onClick={() => navigate("/tasks/create")}
-          className="inline-flex h-12 cursor-pointer items-center justify-center gap-3 rounded-[22px] bg-[linear-gradient(180deg,#6f9fff_0%,var(--color-primary)_100%)] px-5 text-sm font-bold text-white shadow-[var(--color-shadow-pill)] transition duration-200 hover:-translate-y-1 hover:brightness-105 md:h-14 md:px-6 md:text-base"
+          className="inline-flex h-12 cursor-pointer items-center justify-center gap-3 rounded-[22px] bg-[linear-gradient(180deg,#6f9fff_0%,var(--color-primary)_100%)] px-5 text-sm font-bold text-white shadow-(--color-shadow-pill) transition duration-200 hover:-translate-y-1 hover:brightness-105 md:h-14 md:px-6 md:text-base"
         >
           <span className="text-xl leading-none">+</span>
           Add Task
@@ -76,9 +76,9 @@ const TasksTable = ({
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[760px] border-separate border-spacing-0">
+        <table className="w-full min-w-190 border-separate border-spacing-0">
           <thead>
-            <tr className="bg-[var(--color-surface-muted)] text-left text-sm text-[var(--color-text-muted)]">
+            <tr className="bg-(--color-surface-muted) text-left text-sm text-(--color-text-muted)">
               <th className="px-6 py-4 font-bold md:px-7">Title</th>
               <th className="px-6 py-4 font-bold md:px-7">Description</th>
               <th className="px-6 py-4 font-bold md:px-7">Date</th>
@@ -112,7 +112,7 @@ const TasksTable = ({
         </table>
 
         {tasks.length === 0 && (
-          <div className="px-6 py-14 text-center text-base text-[var(--color-text-secondary)]">
+          <div className="px-6 py-14 text-center text-base text-(--color-text-secondary)">
             No tasks match your current search.
           </div>
         )}

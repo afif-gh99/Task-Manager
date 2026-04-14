@@ -30,7 +30,7 @@ const Sign = ({
 
   return (
     <div className="flex h-screen items-center justify-center overflow-hidden bg-[#eef2f7] p-4 md:p-6">
-      <div className="animate-fade-up grid h-[calc(100vh-32px)] w-full max-w-6xl overflow-hidden rounded-[30px] bg-white shadow-[var(--color-shadow-soft)] transition-all duration-300 md:h-[calc(100vh-48px)] md:grid-cols-2">
+      <div className="animate-fade-up grid h-[calc(100vh-32px)] w-full max-w-6xl overflow-hidden rounded-[30px] bg-white shadow-(--color-shadow-soft) transition-all duration-300 md:h-[calc(100vh-48px)] md:grid-cols-2">
         <div className="flex flex-col justify-center px-6 py-5 md:px-10 md:py-8">
           <div className="mb-6 flex items-center gap-3 md:mb-8">
             <img
@@ -43,7 +43,7 @@ const Sign = ({
             </h1>
           </div>
 
-          <div className="w-full max-w-[26.25rem]">
+          <div className="w-full max-w-105">
             <h2 className="mb-2 text-2xl font-bold text-[#202240] md:mb-3 md:text-3xl">
               {title}
             </h2>
@@ -91,7 +91,7 @@ const Sign = ({
           <img
             src="/assets/photo1.png"
             alt="auth"
-            className="max-h-[80%] w-full max-w-[23.75rem] object-contain transition-transform duration-500 hover:scale-[1.02]"
+            className="max-h-[80%] w-full max-w-95 object-contain transition-transform duration-500 hover:scale-[1.02]"
           />
         </div>
       </div>

@@ -42,7 +42,7 @@ const ConfirmModal = ({
           <button
             type="button"
             onClick={onCancel}
-            className="inline-flex h-12 items-center justify-center rounded-[20px] border border-(--color-border-strong) bg-(--color-surface-soft) px-5 text-sm font-semibold text-(--color-text-secondary) transition duration-200 hover:border-(--color-primary) hover:text-[var(--color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(93,142,246,0.16)]"
+            className="inline-flex h-12 items-center justify-center rounded-[20px] border border-(--color-border-strong) bg-(--color-surface-soft) px-5 text-sm font-semibold text-(--color-text-secondary) transition duration-200 hover:border-(--color-primary) hover:text-(--color-primary) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(93,142,246,0.16)]"
           >
             {cancelLabel}
           </button>

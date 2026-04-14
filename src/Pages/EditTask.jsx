@@ -115,8 +115,8 @@ const EditTask = () => {
   if (isLoadingTask) {
     return (
       <div className="font-cairo min-h-screen bg-[radial-gradient(circle_at_top_left,var(--color-page-glow),transparent_32%),radial-gradient(circle_at_top_right,rgba(255,221,185,0.25),transparent_28%),var(--color-page-bg)] px-4 py-5 sm:px-6 md:px-10 lg:px-16 lg:py-7">
-        <div className="mt-8 rounded-[34px] border border-[var(--color-border-strong)] bg-[var(--color-surface-elevated)] p-8 text-center shadow-[var(--color-shadow-soft)]">
-          <p className="text-base font-semibold text-[var(--color-text-secondary)]">
+        <div className="mt-8 rounded-[34px] border border-(--color-border-strong) bg-(--color-surface-elevated) p-8 text-center shadow-(--color-shadow-soft)">
+          <p className="text-base font-semibold text-(--color-text-secondary)">
             Loading task...
           </p>
         </div>
@@ -127,16 +127,16 @@ const EditTask = () => {
   if (selectedTask === null) {
     return (
       <div className="font-cairo min-h-screen bg-[radial-gradient(circle_at_top_left,var(--color-page-glow),transparent_32%),radial-gradient(circle_at_top_right,rgba(255,221,185,0.25),transparent_28%),var(--color-page-bg)] px-4 py-5 sm:px-6 md:px-10 lg:px-16 lg:py-7">
-        <div className="mt-8 rounded-[34px] border border-[var(--color-border-strong)] bg-[var(--color-surface-elevated)] p-8 text-center shadow-[var(--color-shadow-soft)]">
-          <h1 className="text-3xl font-extrabold text-[var(--color-text-primary)]">
+        <div className="mt-8 rounded-[34px] border border-(--color-border-strong) bg-(--color-surface-elevated) p-8 text-center shadow-(--color-shadow-soft)">
+          <h1 className="text-3xl font-extrabold text-(--color-text-primary)">
             Task Not Found
           </h1>
-          <p className="mt-3 text-sm text-[var(--color-text-secondary)]">
+          <p className="mt-3 text-sm text-(--color-text-secondary)">
             We could not load this task from the configured data source.
           </p>
           <Link
             to="/dashboard"
-            className="mt-6 inline-flex h-12 items-center justify-center rounded-2xl bg-[var(--color-primary)] px-6 text-sm font-semibold text-white transition hover:brightness-95"
+            className="mt-6 inline-flex h-12 items-center justify-center rounded-2xl bg-(--color-primary) px-6 text-sm font-semibold text-white transition hover:brightness-95"
           >
             Back to Dashboard
           </Link>

@@ -53,7 +53,9 @@ const Dashboard = () => {
       const tasksResponse = await taskService.getTasks();
       const statsResponse = await taskService.getStats();
       const nextTasks = normalizeTaskListForUi(tasksResponse?.data);
-      const nextStats = normalizeTaskStats(statsResponse?.data ?? statsResponse);
+      const nextStats = normalizeTaskStats(
+        statsResponse?.data ?? statsResponse,
+      );
 
       setTasks(nextTasks);
       setStats(nextStats);
@@ -61,7 +63,10 @@ const Dashboard = () => {
       setTasks([]);
       setStats(null);
       setErrorMessage(
-        getApiErrorMessage(error, "We could not load your dashboard right now."),
+        getApiErrorMessage(
+          error,
+          "We could not load your dashboard right now.",
+        ),
       );
     } finally {
       setIsLoading(false);
@@ -235,13 +240,13 @@ const Dashboard = () => {
       <Cards counts={counts} />
       {/* Page-level loading is used after the initial app loader is gone. */}
       {isLoading && (
-        <div className="mt-8 rounded-[34px] border border-[var(--color-border-strong)] bg-[var(--color-surface-elevated)] px-6 py-8 text-center text-base font-semibold text-[var(--color-text-secondary)] shadow-[var(--color-shadow-soft)]">
+        <div className="mt-8 rounded-[34px] border border-(--color-border-strong) bg-(--color-surface-elevated) px-6 py-8 text-center text-base font-semibold text-(--color-text-secondary) shadow-(--color-shadow-soft)">
           Loading dashboard...
         </div>
       )}
 
       {!isLoading && errorMessage && (
-        <div className="mt-8 rounded-[34px] border border-[rgba(229,83,83,0.24)] bg-[rgba(229,83,83,0.08)] px-6 py-8 text-center text-base font-semibold text-[#cf3f3f] shadow-[var(--color-shadow-soft)]">
+        <div className="mt-8 rounded-[34px] border border-[rgba(229,83,83,0.24)] bg-[rgba(229,83,83,0.08)] px-6 py-8 text-center text-base font-semibold text-[#cf3f3f] shadow-(--color-shadow-soft)">
           {errorMessage}
         </div>
       )}
@@ -250,8 +255,7 @@ const Dashboard = () => {
         <>
           {/* This hidden block is kept only to avoid disturbing the current layout structure. */}
           <div className="hidden">
-            <p className="text-base font-semibold text-[var(--color-text-secondary)] md:text-lg">
-              {"👋 "}
+            <p className="text-base font-semibold text-(--color-text-secondary) md:text-lg">
               {welcomeMessage}
             </p>
           </div>
@@ -274,7 +278,7 @@ const Dashboard = () => {
           message={
             <>
               Are you sure you want to delete{" "}
-              <span className="font-bold text-[var(--color-text-primary)]">
+              <span className="font-bold text-(--color-text-primary)">
                 {taskPendingDelete.title}
               </span>
               ?
