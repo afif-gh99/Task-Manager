@@ -1,14 +1,119 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useOutletContext } from "react-router";
+import { toast } from "react-toastify";
 import Cards from "../components/Cards";
 import ConfirmModal from "../components/ConfirmModal";
 import TasksTable from "../components/TasksTable";
-import { fakeTasks } from "../fakeTasks";
+import {
+  getTaskCounts,
+  normalizeTaskListForUi,
+  normalizeTaskStats,
+} from "../constants/taskStatus";
+import { getApiErrorMessage } from "../lib/api/getApiErrorMessage";
+import { taskService } from "../services/taskService";
 
 const Dashboard = () => {
-  const { searchQuery = "" } = useOutletContext() ?? {};
-  const [tasks, setTasks] = useState(fakeTasks);
+  const {
+    searchQuery = "",
+    startupTasks = null,
+    startupStats = null,
+    startupError = "",
+  } = useOutletContext() ?? {};
+  const [tasks, setTasks] = useState(() =>
+    normalizeTaskListForUi(startupTasks),
+  );
+  const [stats, setStats] = useState(() => normalizeTaskStats(startupStats));
+  const [isLoading, setIsLoading] = useState(
+    !Array.isArray(startupTasks) && !startupError,
+  );
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(startupError);
   const [taskPendingDelete, setTaskPendingDelete] = useState(null);
+  const [updatingTaskId, setUpdatingTaskId] = useState(null);
+  const [deletingTaskId, setDeletingTaskId] = useState(null);
+
+  const loadDashboardData = async () => {
+    if (tasks.length === 0 && !stats) {
+      setIsLoading(true);
+    } else {
+      setIsRefreshing(true);
+    }
+    setErrorMessage("");
+
+    try {
+      const tasksResponse = await taskService.getTasks();
+      const statsResponse = await taskService.getStats();
+      const nextTasks = normalizeTaskListForUi(tasksResponse?.data);
+      const nextStats = normalizeTaskStats(statsResponse?.data ?? statsResponse);
+
+      setTasks(nextTasks);
+      setStats(nextStats);
+    } catch (error) {
+      setTasks([]);
+      setStats(null);
+      setErrorMessage(
+        getApiErrorMessage(error, "We could not load your dashboard right now."),
+      );
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    if (Array.isArray(startupTasks) || startupError) {
+      setTasks(normalizeTaskListForUi(startupTasks));
+      setStats(normalizeTaskStats(startupStats));
+      setErrorMessage(startupError);
+      setIsLoading(false);
+
+      return () => {
+        isMounted = false;
+      };
+    }
+
+    const loadDashboardDataOnce = async () => {
+      try {
+        const tasksResponse = await taskService.getTasks();
+        const statsResponse = await taskService.getStats();
+        const nextTasks = normalizeTaskListForUi(tasksResponse?.data);
+        const nextStats = normalizeTaskStats(
+          statsResponse?.data ?? statsResponse,
+        );
+
+        if (!isMounted) {
+          return;
+        }
+
+        setTasks(nextTasks);
+        setStats(nextStats);
+        setErrorMessage("");
+      } catch (error) {
+        if (isMounted) {
+          setTasks([]);
+          setStats(null);
+          setErrorMessage(
+            getApiErrorMessage(
+              error,
+              "We could not load your dashboard right now.",
+            ),
+          );
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadDashboardDataOnce();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [startupError, startupStats, startupTasks]);
 
   const normalizedSearchQuery = searchQuery.trim().toLowerCase();
 
@@ -22,22 +127,48 @@ const Dashboard = () => {
     );
   }, [normalizedSearchQuery, tasks]);
 
-  const counts = useMemo(
-    () => ({
-      total: tasks.length,
-      pending: tasks.filter((task) => task.status === "pending").length,
-      inProgress: tasks.filter((task) => task.status === "in-progress").length,
-      done: tasks.filter((task) => task.status === "done").length,
-    }),
-    [tasks],
-  );
+  const counts = useMemo(() => {
+    const taskCounts = getTaskCounts(tasks);
 
-  const handleTaskStatusChange = (taskId, nextStatus) => {
-    setTasks((currentTasks) =>
-      currentTasks.map((task) =>
-        task.id === taskId ? { ...task, status: nextStatus } : task,
-      ),
-    );
+    if (taskCounts.total > 0) {
+      return taskCounts;
+    }
+
+    return normalizeTaskStats(stats);
+  }, [stats, tasks]);
+
+  const handleTaskStatusChange = async (taskId, nextStatus) => {
+    const currentTask = tasks.find((task) => task.id === taskId);
+
+    if (!currentTask) {
+      return;
+    }
+
+    try {
+      setUpdatingTaskId(taskId);
+      const response = await taskService.updateTask(taskId, {
+        ...currentTask,
+        status: nextStatus,
+      });
+
+      setTasks((currentTasks) => {
+        const nextTasks = currentTasks.map((task) =>
+          task.id === taskId ? { ...task, status: nextStatus } : task,
+        );
+
+        setStats(getTaskCounts(nextTasks));
+
+        return nextTasks;
+      });
+
+      toast.success(response?.message || "Task updated successfully.");
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(error, "We could not update this task right now."),
+      );
+    } finally {
+      setUpdatingTaskId(null);
+    }
   };
 
   const handleDeleteTask = (taskId) => {
@@ -46,26 +177,52 @@ const Dashboard = () => {
     setTaskPendingDelete(selectedTask);
   };
 
-  const confirmDeleteTask = () => {
+  const confirmDeleteTask = async () => {
     if (!taskPendingDelete) {
       return;
     }
 
-    setTasks((currentTasks) =>
-      currentTasks.filter((task) => task.id !== taskPendingDelete.id),
-    );
+    try {
+      setDeletingTaskId(taskPendingDelete.id);
+      const response = await taskService.deleteTask(taskPendingDelete.id);
 
-    setTaskPendingDelete(null);
+      setTaskPendingDelete(null);
+      toast.success(response?.message || "Task deleted successfully.");
+      await loadDashboardData();
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(error, "We could not delete this task right now."),
+      );
+    } finally {
+      setDeletingTaskId(null);
+    }
   };
 
   return (
     <div>
       <Cards counts={counts} />
+      {isLoading && (
+        <div className="mt-8 rounded-[34px] border border-[var(--color-border-strong)] bg-[var(--color-surface-elevated)] px-6 py-8 text-center text-base font-semibold text-[var(--color-text-secondary)] shadow-[var(--color-shadow-soft)]">
+          Loading dashboard...
+        </div>
+      )}
+
+      {!isLoading && errorMessage && (
+        <div className="mt-8 rounded-[34px] border border-[rgba(229,83,83,0.24)] bg-[rgba(229,83,83,0.08)] px-6 py-8 text-center text-base font-semibold text-[#cf3f3f] shadow-[var(--color-shadow-soft)]">
+          {errorMessage}
+        </div>
+      )}
+
+      {!isLoading && !errorMessage && (
       <TasksTable
         tasks={filteredTasks}
         onDeleteTask={handleDeleteTask}
         onTaskStatusChange={handleTaskStatusChange}
+        updatingTaskId={updatingTaskId}
+        deletingTaskId={deletingTaskId}
+        isRefreshing={isRefreshing}
       />
+      )}
 
       {taskPendingDelete && (
         <ConfirmModal
@@ -76,8 +233,7 @@ const Dashboard = () => {
               <span className="font-bold text-[var(--color-text-primary)]">
                 {taskPendingDelete.title}
               </span>
-              ? This is a temporary local delete and will remove it from the
-              current dashboard view.
+              ?
             </>
           }
           confirmLabel="Delete Task"

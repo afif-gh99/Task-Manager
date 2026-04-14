@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { FcGoogle } from "react-icons/fc";
-import { RiFacebookCircleLine } from "react-icons/ri";
 import { Link } from "react-router";
 
 const Sign = ({
@@ -13,8 +11,7 @@ const Sign = ({
   bottomLinkTo,
   onSubmit,
   showForgotPassword = false,
-  onGoogleClick,
-  onFacebookClick,
+  isSubmitting = false,
 }) => {
   const [formData, setFormData] = useState({});
 
@@ -65,6 +62,7 @@ const Sign = ({
                   placeholder={field.placeholder}
                   required
                   onChange={handleChange}
+                  disabled={isSubmitting}
                   className="h-11 w-full rounded-lg border border-gray-300 px-4 text-sm outline-none transition duration-200 focus:border-blue-500 focus:shadow-[0_0_0_3px_rgba(93,142,246,0.14)] md:h-12"
                 />
               ))}
@@ -80,9 +78,10 @@ const Sign = ({
 
               <button
                 type="submit"
-                className="h-11 w-full cursor-pointer rounded-lg bg-blue-500 text-white font-medium transition duration-200 hover:-translate-y-0.5 hover:bg-blue-600 md:h-12"
+                disabled={isSubmitting}
+                className="h-11 w-full cursor-pointer rounded-lg bg-blue-500 text-white font-medium transition duration-200 hover:-translate-y-0.5 hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-80 md:h-12"
               >
-                {buttonText}
+                {isSubmitting ? `${buttonText}...` : buttonText}
               </button>
             </form>
 
@@ -94,36 +93,6 @@ const Sign = ({
               >
                 {bottomLinkText}
               </Link>
-            </div>
-
-            <div className="my-4 flex items-center gap-4 md:my-5">
-              <div className="flex-1 h-px bg-gray-300"></div>
-              <span className="text-sm text-[#202240]">{buttonText} with</span>
-              <div className="flex-1 h-px bg-gray-300"></div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={onGoogleClick}
-                className="flex h-11 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-gray-300 bg-white transition duration-200 hover:-translate-y-0.5 hover:border-blue-300 md:h-12"
-              >
-                <span className="text-[19px]">
-                  <FcGoogle />
-                </span>
-                <span className="text-gray-600 font-medium">Google</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={onFacebookClick}
-                className="flex h-11 cursor-pointer items-center justify-center gap-1.5 rounded-lg bg-[#4f6fb5] text-white transition duration-200 hover:-translate-y-0.5 hover:bg-[#4464ab] md:h-12"
-              >
-                <span className="text-[19px]">
-                  <RiFacebookCircleLine />
-                </span>
-                <span className="font-medium">Facebook</span>
-              </button>
             </div>
           </div>
         </div>

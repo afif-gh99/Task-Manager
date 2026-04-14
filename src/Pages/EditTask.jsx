@@ -1,25 +1,63 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
+import { toast } from "react-toastify";
 import TaskForm from "../components/TaskForm";
-import { emptyTaskFormValues, fakeTasks } from "../fakeTasks";
+import { emptyTaskFormValues } from "../constants/taskForm";
+import { getApiErrorMessage } from "../lib/api/getApiErrorMessage";
+import { taskService } from "../services/taskService";
 
 const EditTask = () => {
   const navigate = useNavigate();
   const { taskId } = useParams();
   const [formValues, setFormValues] = useState({ ...emptyTaskFormValues });
-
-  const selectedTask = fakeTasks.find((task) => task.id === taskId);
+  const [selectedTask, setSelectedTask] = useState();
+  const [isLoadingTask, setIsLoadingTask] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (selectedTask) {
-      setFormValues({
-        title: selectedTask.title,
-        description: selectedTask.description,
-        date: selectedTask.date,
-        status: selectedTask.status,
-      });
-    }
-  }, [selectedTask]);
+    let isMounted = true;
+
+    const loadTask = async () => {
+      setIsLoadingTask(true);
+
+      try {
+        const response = await taskService.getTaskById(taskId);
+        const task = response?.data ?? response;
+
+        if (!isMounted) {
+          return;
+        }
+
+        setSelectedTask(task ?? null);
+
+        if (task) {
+          setFormValues({
+            title: task.title ?? emptyTaskFormValues.title,
+            description: task.description ?? emptyTaskFormValues.description,
+            date: task.date ?? emptyTaskFormValues.date,
+            status: task.status ?? emptyTaskFormValues.status,
+          });
+        }
+      } catch (error) {
+        if (isMounted) {
+          toast.error(
+            getApiErrorMessage(error, "We could not load this task right now."),
+          );
+          setSelectedTask(null);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoadingTask(false);
+        }
+      }
+    };
+
+    loadTask();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [taskId]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -30,13 +68,54 @@ const EditTask = () => {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Edit task payload:", { taskId, ...formValues });
-    navigate("/dashboard");
+
+    if (
+      !formValues.title ||
+      !formValues.description ||
+      !formValues.date ||
+      !formValues.status
+    ) {
+      toast.error("Please complete all task fields.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const requestBody = {
+        title: formValues.title,
+        description: formValues.description,
+        date: formValues.date,
+        status: formValues.status,
+      };
+
+      const response = await taskService.updateTask(taskId, requestBody);
+      toast.success(response?.message || "Task updated successfully.");
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(error, "We could not update this task right now."),
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  if (!selectedTask) {
+  if (isLoadingTask) {
+    return (
+      <div className="font-cairo min-h-screen bg-[radial-gradient(circle_at_top_left,var(--color-page-glow),transparent_32%),radial-gradient(circle_at_top_right,rgba(255,221,185,0.25),transparent_28%),var(--color-page-bg)] px-4 py-5 sm:px-6 md:px-10 lg:px-16 lg:py-7">
+        <div className="mt-8 rounded-[34px] border border-[var(--color-border-strong)] bg-[var(--color-surface-elevated)] p-8 text-center shadow-[var(--color-shadow-soft)]">
+          <p className="text-base font-semibold text-[var(--color-text-secondary)]">
+            Loading task...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (selectedTask === null) {
     return (
       <div className="font-cairo min-h-screen bg-[radial-gradient(circle_at_top_left,var(--color-page-glow),transparent_32%),radial-gradient(circle_at_top_right,rgba(255,221,185,0.25),transparent_28%),var(--color-page-bg)] px-4 py-5 sm:px-6 md:px-10 lg:px-16 lg:py-7">
         <div className="mt-8 rounded-[34px] border border-[var(--color-border-strong)] bg-[var(--color-surface-elevated)] p-8 text-center shadow-[var(--color-shadow-soft)]">
@@ -44,8 +123,7 @@ const EditTask = () => {
             Task Not Found
           </h1>
           <p className="mt-3 text-sm text-[var(--color-text-secondary)]">
-            This temporary edit page could not match the task id from the local
-            fake data source.
+            We could not load this task from the configured data source.
           </p>
           <Link
             to="/dashboard"
@@ -67,6 +145,7 @@ const EditTask = () => {
         badgeLabel="Edit task"
         values={formValues}
         onChange={handleChange}
+        isSubmitting={isSubmitting}
         onStatusChange={(status) =>
           setFormValues((currentValues) => ({
             ...currentValues,

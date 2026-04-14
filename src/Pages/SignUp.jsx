@@ -1,9 +1,13 @@
-import axios from "axios";
+import { useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 import Sign from "../components/Sign";
+import { getApiErrorMessage } from "../lib/api/getApiErrorMessage";
+import { authService } from "../services/authService";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const signupFields = [
     {
@@ -29,27 +33,36 @@ const Signup = () => {
   ];
 
   const handleSignup = async (data) => {
-    console.log("Signup Data:", data);
+    if (!data.name || !data.email || !data.password || !data.confirmPassword) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
 
-    // try {
-    //   const res = await axios.post("SIGNUP_API", data);
-    //   console.log(res.data);
-    //   navigate("/dashboard");
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    if (data.password !== data.confirmPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
 
-    navigate("/dashboard");
-  };
+    setIsSubmitting(true);
 
-  const handleGoogleClick = () => {
-    console.log("Google signup");
-    // window.location.href = "YOUR_GOOGLE_AUTH_API";
-  };
+    try {
+      const requestBody = {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        password_confirmation: data.confirmPassword,
+      };
 
-  const handleFacebookClick = () => {
-    console.log("Facebook signup");
-    // window.location.href = "YOUR_FACEBOOK_AUTH_API";
+      const response = await authService.register(requestBody);
+      toast.success(response?.message || "Account created successfully.");
+      navigate("/signin");
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(error, "We could not create your account right now."),
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -62,8 +75,7 @@ const Signup = () => {
       bottomLinkText="Log In"
       bottomLinkTo="/signin"
       onSubmit={handleSignup}
-      onGoogleClick={handleGoogleClick}
-      onFacebookClick={handleFacebookClick}
+      isSubmitting={isSubmitting}
     />
   );
 };

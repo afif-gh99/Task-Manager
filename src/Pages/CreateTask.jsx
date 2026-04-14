@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 import TaskForm from "../components/TaskForm";
-import { emptyTaskFormValues } from "../fakeTasks";
+import { emptyTaskFormValues } from "../constants/taskForm";
+import { getApiErrorMessage } from "../lib/api/getApiErrorMessage";
+import { taskService } from "../services/taskService";
 
 const CreateTask = () => {
   const navigate = useNavigate();
   const [formValues, setFormValues] = useState({ ...emptyTaskFormValues });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -16,10 +20,39 @@ const CreateTask = () => {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Create task payload:", formValues);
-    navigate("/dashboard");
+
+    if (
+      !formValues.title ||
+      !formValues.description ||
+      !formValues.date ||
+      !formValues.status
+    ) {
+      toast.error("Please complete all task fields.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const requestBody = {
+        title: formValues.title,
+        description: formValues.description,
+        date: formValues.date,
+        status: formValues.status,
+      };
+
+      const response = await taskService.createTask(requestBody);
+      toast.success(response?.message || "Task created successfully.");
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(error, "We could not create this task right now."),
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -31,6 +64,7 @@ const CreateTask = () => {
         badgeLabel="Create task"
         values={formValues}
         onChange={handleChange}
+        isSubmitting={isSubmitting}
         onStatusChange={(status) =>
           setFormValues((currentValues) => ({
             ...currentValues,

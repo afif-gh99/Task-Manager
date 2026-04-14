@@ -11,6 +11,7 @@ const TaskForm = ({
   onChange,
   onStatusChange,
   onSubmit,
+  isSubmitting = false,
 }) => {
   const statusOptions = [
     { value: "pending", label: "Pending" },
@@ -74,6 +75,7 @@ const TaskForm = ({
               type="text"
               value={values.title}
               onChange={onChange}
+              disabled={isSubmitting}
               placeholder="Give this task a clear title"
               required
               className="h-14 rounded-3xl border border-(--color-border-strong) bg-(--color-surface-soft) px-5 text-base text-(--color-text-primary) outline-none transition duration-200 placeholder:text-(--color-text-muted) focus:border-(--color-primary) focus:bg-white md:h-16 md:text-lg"
@@ -89,6 +91,7 @@ const TaskForm = ({
               name="description"
               value={values.description}
               onChange={onChange}
+              disabled={isSubmitting}
               placeholder="Add context, goals, or next steps"
               required
               rows={7}
@@ -107,6 +110,7 @@ const TaskForm = ({
                 type="date"
                 value={values.date}
                 onChange={onChange}
+                disabled={isSubmitting}
                 required
                 className="h-14 rounded-3xl border border-(--color-border-strong) bg-(--color-surface-soft) px-5 text-base text-(--color-text-primary) outline-none transition duration-200 focus:border-(--color-primary) focus:bg-white md:h-16 md:text-lg"
               />
@@ -124,6 +128,7 @@ const TaskForm = ({
                     <button
                       key={option.value}
                       type="button"
+                      disabled={isSubmitting}
                       onClick={() => onStatusChange(option.value)}
                       className={`inline-flex h-13 min-w-28 items-center justify-center rounded-full border px-4 text-sm font-bold transition duration-200 hover:-translate-y-0.5 md:h-14 md:min-w-31 md:px-6 md:text-base ${
                         isActive
@@ -146,12 +151,13 @@ const TaskForm = ({
             >
               Cancel
             </Link>
-            <button
-              type="submit"
-              className="inline-flex h-12 cursor-pointer items-center justify-center gap-3 rounded-[22px] bg-[linear-gradient(180deg,#6f9fff_0%,var(--color-primary)_100%)] px-6 text-base font-bold text-white shadow-(--color-shadow-pill) transition duration-200 hover:-translate-y-1 hover:brightness-105 md:h-14 md:px-8 md:text-lg"
-            >
-              <span className="text-xl leading-none md:text-2xl">+</span>
-              {submitLabel}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="inline-flex h-12 cursor-pointer items-center justify-center gap-3 rounded-[22px] bg-[linear-gradient(180deg,#6f9fff_0%,var(--color-primary)_100%)] px-6 text-base font-bold text-white shadow-(--color-shadow-pill) transition duration-200 hover:-translate-y-1 hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-80 md:h-14 md:px-8 md:text-lg"
+              >
+                <span className="text-xl leading-none md:text-2xl">+</span>
+                {isSubmitting ? `${submitLabel}...` : submitLabel}
             </button>
           </div>
         </form>

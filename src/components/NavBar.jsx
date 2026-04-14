@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import ConfirmModal from "./ConfirmModal";
+import { authService } from "../services/authService";
 
 const NavBar = ({
   logoSrc,
@@ -18,13 +20,10 @@ const NavBar = ({
   };
 
   const handleConfirmLogout = () => {
-    // TODO: Replace this placeholder with the real logout API flow later.
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("user");
+    authService.logout();
+    toast.success("Logged out successfully.");
     setLogoutPending(false);
-    navigate("/");
+    navigate("/signin");
   };
 
   return (
@@ -70,7 +69,7 @@ const NavBar = ({
       {logoutPending && (
         <ConfirmModal
           title="Are you sure you want to log out?"
-          message="This will clear the temporary auth state for the current session and take you back to the sign-in page."
+          message="This will clear the stored auth session and take you back to the sign-in page."
           confirmLabel="Log Out"
           type="warning"
           onConfirm={handleConfirmLogout}

@@ -1,28 +1,47 @@
 import { useNavigate } from "react-router";
+import {
+  TASK_STATUS,
+  getTaskStatusLabel,
+  normalizeTaskStatus,
+} from "../constants/taskStatus";
 import TaskRow from "./TaskRow";
 
 const statusConfig = {
-  pending: {
-    label: "Pending",
-    nextStatus: "in-progress",
+  [TASK_STATUS.PENDING]: {
+    label: getTaskStatusLabel(TASK_STATUS.PENDING),
+    nextStatus: TASK_STATUS.IN_PROGRESS,
     pillClassName:
       "bg-[var(--color-status-pending-bg)] text-[var(--color-status-pending-text)] shadow-[0_10px_28px_rgba(255,217,122,0.35)] hover:brightness-95",
   },
-  "in-progress": {
-    label: "In Progress",
-    nextStatus: "done",
+  [TASK_STATUS.IN_PROGRESS]: {
+    label: getTaskStatusLabel(TASK_STATUS.IN_PROGRESS),
+    nextStatus: TASK_STATUS.DONE,
     pillClassName:
       "bg-[var(--color-status-progress-bg)] text-[var(--color-status-progress-text)] shadow-[var(--color-shadow-pill)] hover:brightness-95",
   },
-  done: {
-    label: "Done",
-    nextStatus: "pending",
+  [TASK_STATUS.DONE]: {
+    label: getTaskStatusLabel(TASK_STATUS.DONE),
+    nextStatus: TASK_STATUS.PENDING,
     pillClassName:
       "bg-[var(--color-status-done-bg)] text-[var(--color-status-done-text)] shadow-[0_10px_28px_rgba(79,209,116,0.28)] hover:brightness-95",
   },
 };
 
-const TasksTable = ({ tasks, onDeleteTask, onTaskStatusChange }) => {
+const defaultStatusMeta = {
+  label: "Unknown",
+  nextStatus: TASK_STATUS.PENDING,
+  pillClassName:
+    "bg-[var(--color-surface-muted)] text-[var(--color-text-muted)] shadow-[var(--color-shadow-soft)] hover:brightness-95",
+};
+
+const TasksTable = ({
+  tasks,
+  onDeleteTask,
+  onTaskStatusChange,
+  updatingTaskId = null,
+  deletingTaskId = null,
+  isRefreshing = false,
+}) => {
   const navigate = useNavigate();
 
   const handleEditTask = (taskId) => {
@@ -30,7 +49,11 @@ const TasksTable = ({ tasks, onDeleteTask, onTaskStatusChange }) => {
   };
 
   return (
-    <section className="animate-fade-up mt-8 overflow-hidden rounded-[34px] border border-[var(--color-border-strong)] bg-[var(--color-surface-elevated)] shadow-[var(--color-shadow-soft)] backdrop-blur-sm transition-all duration-300">
+    <section
+      className={`animate-fade-up mt-8 overflow-hidden rounded-[34px] border border-[var(--color-border-strong)] bg-[var(--color-surface-elevated)] shadow-[var(--color-shadow-soft)] backdrop-blur-sm transition-all duration-300 ${
+        isRefreshing ? "opacity-90" : "opacity-100"
+      }`}
+    >
       <div className="flex flex-col gap-4 px-6 py-6 sm:flex-row sm:items-center sm:justify-between md:px-7">
         <div>
           <h2 className="text-3xl font-extrabold tracking-tight text-[var(--color-text-primary)] md:text-4xl">
@@ -61,21 +84,26 @@ const TasksTable = ({ tasks, onDeleteTask, onTaskStatusChange }) => {
           </thead>
 
           <tbody>
-            {tasks.map((task) => (
-              <TaskRow
-                key={task.id}
-                task={task}
-                statusMeta={statusConfig[task.status]}
-                onEdit={handleEditTask}
-                onDelete={onDeleteTask}
-                onStatusChange={(taskId) =>
-                  onTaskStatusChange(
-                    taskId,
-                    statusConfig[task.status].nextStatus,
-                  )
-                }
-              />
-            ))}
+            {tasks.map((task) => {
+              const normalizedStatus = normalizeTaskStatus(task.status);
+              const statusMeta =
+                statusConfig[normalizedStatus] ?? defaultStatusMeta;
+
+              return (
+                <TaskRow
+                  key={task.id}
+                  task={task}
+                  statusMeta={statusMeta}
+                  isUpdating={updatingTaskId === task.id}
+                  isDeleting={deletingTaskId === task.id}
+                  onEdit={handleEditTask}
+                  onDelete={onDeleteTask}
+                  onStatusChange={(taskId) =>
+                    onTaskStatusChange(taskId, statusMeta.nextStatus)
+                  }
+                />
+              );
+            })}
           </tbody>
         </table>
 

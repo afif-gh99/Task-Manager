@@ -1,11 +1,14 @@
-import axios from "axios";
+import { useState } from "react";
 import { useNavigate } from "react-router";
-import { useIntroLoader } from "../components/AppEntry";
+import { toast } from "react-toastify";
 import Sign from "../components/Sign";
+import { getApiErrorMessage } from "../lib/api/getApiErrorMessage";
+import { authService } from "../services/authService";
+import { tokenStorage, userStorage } from "../lib/auth/tokenStorage";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { playIntro } = useIntroLoader();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const loginFields = [
     {
@@ -21,30 +24,32 @@ const Login = () => {
   ];
 
   const handleLogin = async (data) => {
-    console.log("Login Data:", data);
+    if (!data.email || !data.password) {
+      toast.error("Email and password are required.");
+      return;
+    }
 
-    // try {
-    //   const res = await axios.post("LOGIN_API", data);
-    //   localStorage.setItem("token", res.data.token);
-    //   localStorage.setItem("user", JSON.stringify(res.data.user));
-    //   await playIntro();
-    //   navigate("/dashboard");
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    setIsSubmitting(true);
 
-    await playIntro();
-    navigate("/dashboard");
-  };
+    try {
+      const requestBody = {
+        email: data.email,
+        password: data.password,
+      };
 
-  const handleGoogleClick = () => {
-    console.log("Google login");
-    // window.location.href = "YOUR_GOOGLE_AUTH_API";
-  };
+      const session = await authService.login(requestBody);
 
-  const handleFacebookClick = () => {
-    console.log("Facebook login");
-    // window.location.href = "YOUR_FACEBOOK_AUTH_API";
+      tokenStorage.setToken(session?.Token);
+      userStorage.setUser(session?.User);
+      toast.success(session?.message || "Signed in successfully.");
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(error, "We could not sign you in right now."),
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -58,8 +63,7 @@ const Login = () => {
       bottomLinkTo="/signup"
       onSubmit={handleLogin}
       showForgotPassword={true}
-      onGoogleClick={handleGoogleClick}
-      onFacebookClick={handleFacebookClick}
+      isSubmitting={isSubmitting}
     />
   );
 };
