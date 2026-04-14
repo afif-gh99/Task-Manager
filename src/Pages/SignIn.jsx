@@ -1,3 +1,6 @@
+// This page handles the sign-in flow.
+// It validates the form, calls the login endpoint, stores auth data,
+// then redirects the user to the dashboard.
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
@@ -8,8 +11,10 @@ import { tokenStorage, userStorage } from "../lib/auth/tokenStorage";
 
 const Login = () => {
   const navigate = useNavigate();
+  // Local submit state is used only for button disabling and UX feedback.
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // These field definitions are passed into the shared Sign form component.
   const loginFields = [
     {
       name: "email",
@@ -23,6 +28,11 @@ const Login = () => {
     },
   ];
 
+  // Submit flow:
+  // 1. validate required fields
+  // 2. call the login API
+  // 3. store token + user for later authenticated requests
+  // 4. show a toast and redirect
   const handleLogin = async (data) => {
     if (!data.email || !data.password) {
       toast.error("Email and password are required.");
@@ -32,6 +42,7 @@ const Login = () => {
     setIsSubmitting(true);
 
     try {
+      // Build the exact request body expected by the auth API.
       const requestBody = {
         email: data.email,
         password: data.password,
@@ -39,6 +50,7 @@ const Login = () => {
 
       const session = await authService.login(requestBody);
 
+      // Save auth state locally so protected task requests can attach the token.
       tokenStorage.setToken(session?.Token);
       userStorage.setUser(session?.User);
       toast.success(session?.message || "Signed in successfully.");

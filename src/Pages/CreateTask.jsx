@@ -1,3 +1,6 @@
+// This page creates a new task.
+// It owns the task form state, validates required fields, sends the create
+// request, and redirects back to the dashboard after success.
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
@@ -8,9 +11,11 @@ import { taskService } from "../services/taskService";
 
 const CreateTask = () => {
   const navigate = useNavigate();
+  // Form state stays local to this page so the shared TaskForm stays presentational.
   const [formValues, setFormValues] = useState({ ...emptyTaskFormValues });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Updates one field in the local form state.
   const handleChange = (event) => {
     const { name, value } = event.target;
 
@@ -20,6 +25,11 @@ const CreateTask = () => {
     }));
   };
 
+  // Submit flow:
+  // 1. validate required fields
+  // 2. send the create request
+  // 3. show feedback
+  // 4. return to the dashboard
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -36,6 +46,7 @@ const CreateTask = () => {
     setIsSubmitting(true);
 
     try {
+      // The service will map UI status values before sending them to the API.
       const requestBody = {
         title: formValues.title,
         description: formValues.description,

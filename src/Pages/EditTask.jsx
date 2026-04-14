@@ -1,3 +1,6 @@
+// This page edits an existing task.
+// It loads the selected task, hydrates the shared form, then sends
+// an update request when the user saves their changes.
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
@@ -9,11 +12,14 @@ import { taskService } from "../services/taskService";
 const EditTask = () => {
   const navigate = useNavigate();
   const { taskId } = useParams();
+  // Local page state keeps the loading, submit, and selected task flow easy to follow.
   const [formValues, setFormValues] = useState({ ...emptyTaskFormValues });
   const [selectedTask, setSelectedTask] = useState();
   const [isLoadingTask, setIsLoadingTask] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Initial load:
+  // fetch the task by id, normalize it in the service, then copy it into form state.
   useEffect(() => {
     let isMounted = true;
 
@@ -59,6 +65,7 @@ const EditTask = () => {
     };
   }, [taskId]);
 
+  // Updates one field in the edit form state.
   const handleChange = (event) => {
     const { name, value } = event.target;
 
@@ -68,6 +75,7 @@ const EditTask = () => {
     }));
   };
 
+  // Submit flow mirrors the create page, but targets the update endpoint instead.
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -84,6 +92,7 @@ const EditTask = () => {
     setIsSubmitting(true);
 
     try {
+      // The service maps the UI status to the backend value before sending.
       const requestBody = {
         title: formValues.title,
         description: formValues.description,

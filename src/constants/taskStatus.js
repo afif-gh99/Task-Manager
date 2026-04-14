@@ -1,3 +1,6 @@
+// This file is the single source of truth for task statuses.
+// It explains how UI-friendly values map to backend values and how
+// task/status data should be normalized before rendering or sending requests.
 export const TASK_STATUS = {
   PENDING: "pending",
   IN_PROGRESS: "in-progress",
@@ -23,6 +26,7 @@ export const taskStatusConfig = {
   },
 };
 
+// Builds a backend -> UI lookup table from the shared config above.
 const apiToUiTaskStatusMap = Object.values(taskStatusConfig).reduce(
   (accumulator, statusItem) => {
     accumulator[statusItem.apiValue] = statusItem.uiValue;
@@ -31,6 +35,7 @@ const apiToUiTaskStatusMap = Object.values(taskStatusConfig).reduce(
   {},
 );
 
+// Builds a UI -> backend lookup table from the same shared config.
 const uiToApiTaskStatusMap = Object.values(taskStatusConfig).reduce(
   (accumulator, statusItem) => {
     accumulator[statusItem.uiValue] = statusItem.apiValue;
@@ -39,6 +44,8 @@ const uiToApiTaskStatusMap = Object.values(taskStatusConfig).reduce(
   {},
 );
 
+// Accepts either a backend status or a UI status and returns the normalized
+// UI value used internally by the app.
 export const normalizeTaskStatus = (status) => {
   if (!status || typeof status !== "string") {
     return TASK_STATUS.UNKNOWN;
@@ -63,12 +70,15 @@ export const normalizeTaskStatus = (status) => {
   return TASK_STATUS.UNKNOWN;
 };
 
+// Converts a normalized UI status back into the exact string the API expects.
 export const mapTaskStatusToApi = (status) =>
   uiToApiTaskStatusMap[normalizeTaskStatus(status)] ?? status;
 
+// Returns the label we want to show to the user for a given status.
 export const getTaskStatusLabel = (status) =>
   taskStatusConfig[normalizeTaskStatus(status)]?.label ?? "Unknown";
 
+// Normalizes one task object after it comes back from the API.
 export const normalizeTaskForUi = (task) => {
   if (!task) {
     return task;
@@ -80,6 +90,8 @@ export const normalizeTaskForUi = (task) => {
   };
 };
 
+// Normalizes a full task list so counting, filtering, and status display
+// all work from the same internal values.
 export const normalizeTaskListForUi = (tasks) => {
   if (!Array.isArray(tasks)) {
     return [];
@@ -88,6 +100,7 @@ export const normalizeTaskListForUi = (tasks) => {
   return tasks.map(normalizeTaskForUi);
 };
 
+// Converts a task payload from UI values to backend values before create/update.
 export const mapTaskPayloadToApi = (payload) => {
   if (!payload) {
     return payload;
@@ -99,6 +112,8 @@ export const mapTaskPayloadToApi = (payload) => {
   };
 };
 
+// Derives dashboard counts directly from normalized tasks.
+// This is the safest fallback when backend stats are missing or inconsistent.
 export const getTaskCounts = (taskItems) => {
   const normalizedTasks = normalizeTaskListForUi(taskItems);
 
@@ -129,6 +144,8 @@ export const getTaskCounts = (taskItems) => {
   );
 };
 
+// Reshapes backend stats into a stable object used by the dashboard cards.
+// It accepts a few possible backend key formats so the UI stays resilient.
 export const normalizeTaskStats = (stats) => {
   if (!stats || typeof stats !== "object") {
     return getTaskCounts([]);

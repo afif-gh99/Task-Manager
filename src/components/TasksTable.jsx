@@ -41,6 +41,7 @@ const TasksTable = ({
   updatingTaskId = null,
   deletingTaskId = null,
   isRefreshing = false,
+  welcomeMessage = "Welcome back",
 }) => {
   const navigate = useNavigate();
 
@@ -56,6 +57,9 @@ const TasksTable = ({
     >
       <div className="flex flex-col gap-4 px-6 py-6 sm:flex-row sm:items-center sm:justify-between md:px-7">
         <div>
+          <p className="mb-1 text-sm font-bold tracking-[0.01em] text-[var(--color-text-secondary)] md:text-xl">
+            {welcomeMessage}
+          </p>
           <h2 className="text-3xl font-extrabold tracking-tight text-[var(--color-text-primary)] md:text-4xl">
             My tasks
           </h2>

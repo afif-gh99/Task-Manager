@@ -1,3 +1,6 @@
+// This page is the main authenticated dashboard.
+// It loads tasks and stats, keeps task actions in sync with the API,
+// and passes normalized data into the dashboard UI components.
 import { useEffect, useMemo, useState } from "react";
 import { useOutletContext } from "react-router";
 import { toast } from "react-toastify";
@@ -10,6 +13,7 @@ import {
   normalizeTaskStats,
 } from "../constants/taskStatus";
 import { getApiErrorMessage } from "../lib/api/getApiErrorMessage";
+import { userStorage } from "../lib/auth/tokenStorage";
 import { taskService } from "../services/taskService";
 
 const Dashboard = () => {
@@ -19,6 +23,10 @@ const Dashboard = () => {
     startupStats = null,
     startupError = "",
   } = useOutletContext() ?? {};
+  // Dashboard state:
+  // - tasks/stats hold normalized data used by cards and the table
+  // - loading flags control startup and refresh UX
+  // - action ids let the table show lightweight pending states per row
   const [tasks, setTasks] = useState(() =>
     normalizeTaskListForUi(startupTasks),
   );
@@ -32,6 +40,7 @@ const Dashboard = () => {
   const [updatingTaskId, setUpdatingTaskId] = useState(null);
   const [deletingTaskId, setDeletingTaskId] = useState(null);
 
+  // Re-fetches dashboard data after deletes or other manual refresh points.
   const loadDashboardData = async () => {
     if (tasks.length === 0 && !stats) {
       setIsLoading(true);
@@ -60,6 +69,9 @@ const Dashboard = () => {
     }
   };
 
+  // Initial data flow:
+  // 1. use bootstrapped data if AppEntry already loaded it
+  // 2. otherwise fetch tasks and stats here
   useEffect(() => {
     let isMounted = true;
 
@@ -117,6 +129,7 @@ const Dashboard = () => {
 
   const normalizedSearchQuery = searchQuery.trim().toLowerCase();
 
+  // Search only filters the already-loaded tasks in memory.
   const filteredTasks = useMemo(() => {
     if (!normalizedSearchQuery) {
       return tasks;
@@ -127,6 +140,8 @@ const Dashboard = () => {
     );
   }, [normalizedSearchQuery, tasks]);
 
+  // Prefer counts derived from the normalized task list.
+  // If the task list is empty, fall back to normalized stats from the API.
   const counts = useMemo(() => {
     const taskCounts = getTaskCounts(tasks);
 
@@ -137,6 +152,20 @@ const Dashboard = () => {
     return normalizeTaskStats(stats);
   }, [stats, tasks]);
 
+  // Read the stored authenticated user so the task section can greet them.
+  const welcomeMessage = useMemo(() => {
+    const storedUser = userStorage.getUser();
+    const userName =
+      storedUser?.name ?? storedUser?.Name ?? storedUser?.userName ?? "";
+
+    if (!userName || typeof userName !== "string") {
+      return "Welcome back";
+    }
+
+    return `Welcome back, ${userName}`;
+  }, []);
+
+  // Updates one task status, then updates local state so the UI feels immediate.
   const handleTaskStatusChange = async (taskId, nextStatus) => {
     const currentTask = tasks.find((task) => task.id === taskId);
 
@@ -151,6 +180,7 @@ const Dashboard = () => {
         status: nextStatus,
       });
 
+      // Keep tasks and counts in sync after a successful status change.
       setTasks((currentTasks) => {
         const nextTasks = currentTasks.map((task) =>
           task.id === taskId ? { ...task, status: nextStatus } : task,
@@ -171,12 +201,14 @@ const Dashboard = () => {
     }
   };
 
+  // Opens the confirmation modal for the selected task.
   const handleDeleteTask = (taskId) => {
     const selectedTask = tasks.find((task) => task.id === taskId) ?? null;
 
     setTaskPendingDelete(selectedTask);
   };
 
+  // Deletes the selected task, then refreshes the list from the API.
   const confirmDeleteTask = async () => {
     if (!taskPendingDelete) {
       return;
@@ -201,6 +233,7 @@ const Dashboard = () => {
   return (
     <div>
       <Cards counts={counts} />
+      {/* Page-level loading is used after the initial app loader is gone. */}
       {isLoading && (
         <div className="mt-8 rounded-[34px] border border-[var(--color-border-strong)] bg-[var(--color-surface-elevated)] px-6 py-8 text-center text-base font-semibold text-[var(--color-text-secondary)] shadow-[var(--color-shadow-soft)]">
           Loading dashboard...
@@ -214,14 +247,25 @@ const Dashboard = () => {
       )}
 
       {!isLoading && !errorMessage && (
-      <TasksTable
-        tasks={filteredTasks}
-        onDeleteTask={handleDeleteTask}
-        onTaskStatusChange={handleTaskStatusChange}
-        updatingTaskId={updatingTaskId}
-        deletingTaskId={deletingTaskId}
-        isRefreshing={isRefreshing}
-      />
+        <>
+          {/* This hidden block is kept only to avoid disturbing the current layout structure. */}
+          <div className="hidden">
+            <p className="text-base font-semibold text-[var(--color-text-secondary)] md:text-lg">
+              {"👋 "}
+              {welcomeMessage}
+            </p>
+          </div>
+
+          <TasksTable
+            tasks={filteredTasks}
+            onDeleteTask={handleDeleteTask}
+            onTaskStatusChange={handleTaskStatusChange}
+            updatingTaskId={updatingTaskId}
+            deletingTaskId={deletingTaskId}
+            isRefreshing={isRefreshing}
+            welcomeMessage={welcomeMessage}
+          />
+        </>
       )}
 
       {taskPendingDelete && (

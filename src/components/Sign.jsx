@@ -10,7 +10,6 @@ const Sign = ({
   bottomLinkText,
   bottomLinkTo,
   onSubmit,
-  showForgotPassword = false,
   isSubmitting = false,
 }) => {
   const [formData, setFormData] = useState({});
@@ -66,15 +65,6 @@ const Sign = ({
                   className="h-11 w-full rounded-lg border border-gray-300 px-4 text-sm outline-none transition duration-200 focus:border-blue-500 focus:shadow-[0_0_0_3px_rgba(93,142,246,0.14)] md:h-12"
                 />
               ))}
-
-              {showForgotPassword && (
-                <Link
-                  to="/forgot-password"
-                  className="block text-sm text-blue-600 underline"
-                >
-                  Forgot Password?
-                </Link>
-              )}
 
               <button
                 type="submit"

@@ -1,3 +1,6 @@
+// This page handles user registration.
+// It prepares the signup payload, shows toast feedback, and redirects
+// the user to the sign-in page after a successful account creation.
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
@@ -7,8 +10,10 @@ import { authService } from "../services/authService";
 
 const Signup = () => {
   const navigate = useNavigate();
+  // Local submit state keeps the primary button responsive but controlled.
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Field definitions are passed into the shared auth form component.
   const signupFields = [
     {
       name: "name",
@@ -32,6 +37,11 @@ const Signup = () => {
     },
   ];
 
+  // Submit flow:
+  // 1. validate required fields and password confirmation
+  // 2. send the register request
+  // 3. show feedback
+  // 4. redirect to login
   const handleSignup = async (data) => {
     if (!data.name || !data.email || !data.password || !data.confirmPassword) {
       toast.error("Please fill in all required fields.");
@@ -46,6 +56,7 @@ const Signup = () => {
     setIsSubmitting(true);
 
     try {
+      // Match the backend register payload exactly.
       const requestBody = {
         name: data.name,
         email: data.email,

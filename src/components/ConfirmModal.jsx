@@ -23,18 +23,18 @@ const ConfirmModal = ({
   const toneClasses = modalToneClasses[type] ?? modalToneClasses.warning;
 
   return (
-    <div className="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-[rgba(20,28,58,0.42)] px-4 py-6 backdrop-blur-[4px]">
-      <div className="animate-modal-pop flex flex-col items-center w-full max-w-md rounded-[30px] border border-[var(--color-border-strong)] bg-[var(--color-surface-primary)] p-6 shadow-[0_28px_80px_rgba(31,40,88,0.18)] sm:p-7">
+    <div className="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-[rgba(20,28,58,0.42)] px-4 py-6 backdrop-blur-xs">
+      <div className="animate-modal-pop flex flex-col items-center w-full max-w-md rounded-[30px] border border-(--color-border-strong) bg-(--color-surface-primary) p-6 shadow-[0_28px_80px_rgba(31,40,88,0.18)] sm:p-7">
         <div
           className={`mb-5 flex h-14 w-14 items-center justify-center rounded-2xl text-2xl ${toneClasses.iconWrap}`}
         >
           !
         </div>
 
-        <h3 className="text-xl font-extrabold text-[var(--color-text-primary)] sm:text-2xl">
+        <h3 className="text-xl font-extrabold text-(--color-text-primary) sm:text-2xl">
           {title}
         </h3>
-        <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)] sm:text-base">
+        <p className="mt-3 text-sm leading-7 text-(--color-text-secondary) sm:text-base">
           {message}
         </p>
 
@@ -42,7 +42,7 @@ const ConfirmModal = ({
           <button
             type="button"
             onClick={onCancel}
-            className="inline-flex h-12 items-center justify-center rounded-[20px] border border-[var(--color-border-strong)] bg-[var(--color-surface-soft)] px-5 text-sm font-semibold text-[var(--color-text-secondary)] transition duration-200 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(93,142,246,0.16)]"
+            className="inline-flex h-12 items-center justify-center rounded-[20px] border border-(--color-border-strong) bg-(--color-surface-soft) px-5 text-sm font-semibold text-(--color-text-secondary) transition duration-200 hover:border-(--color-primary) hover:text-[var(--color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(93,142,246,0.16)]"
           >
             {cancelLabel}
           </button>

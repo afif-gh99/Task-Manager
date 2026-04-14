@@ -1,5 +1,11 @@
+// This file is responsible for storing and reading auth data in browser storage.
+// It keeps token and user persistence in one place so auth pages and services
+// do not need to repeat storage logic.
 const TOKEN_STORAGE_KEY = "auth_token";
 const USER_STORAGE_KEY = "auth_user";
+
+// Some environments may not allow storage access, so this helper gives us
+// a safe way to interact with localStorage/sessionStorage.
 const getStorageTargets = () => {
   try {
     return [localStorage, sessionStorage];
@@ -9,6 +15,7 @@ const getStorageTargets = () => {
 };
 
 export const tokenStorage = {
+  // Returns the saved token from either persistent or session storage.
   getToken() {
     try {
       return (
@@ -20,6 +27,8 @@ export const tokenStorage = {
     }
   },
 
+  // Saves the token and clears the opposite storage location so we keep
+  // only one active copy of the auth token.
   setToken(token, options = {}) {
     const storageTargets = getStorageTargets();
 
@@ -40,6 +49,7 @@ export const tokenStorage = {
     targetStorage.setItem(TOKEN_STORAGE_KEY, token);
   },
 
+  // Clears the token from every supported storage target during logout.
   clearToken() {
     getStorageTargets().forEach((storage) =>
       storage.removeItem(TOKEN_STORAGE_KEY),
@@ -48,6 +58,7 @@ export const tokenStorage = {
 };
 
 export const userStorage = {
+  // Reads the stored user object and safely parses it back into JSON.
   getUser() {
     let storedUser = null;
 
@@ -70,6 +81,8 @@ export const userStorage = {
     }
   },
 
+  // Persists the authenticated user payload so screens like the dashboard
+  // can personalize the UI without making another auth request.
   setUser(user, options = {}) {
     const storageTargets = getStorageTargets();
 
@@ -90,6 +103,7 @@ export const userStorage = {
     targetStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
   },
 
+  // Removes the saved user from storage during logout.
   clearUser() {
     getStorageTargets().forEach((storage) =>
       storage.removeItem(USER_STORAGE_KEY),
@@ -97,6 +111,7 @@ export const userStorage = {
   },
 };
 
+// Convenience helper used by logout flows to clear all auth state at once.
 export const clearAuthStorage = () => {
   tokenStorage.clearToken();
   userStorage.clearUser();
