@@ -9,7 +9,7 @@ import Cards from "../components/Cards";
 import ConfirmModal from "../components/ConfirmModal";
 import TasksTable from "../components/TasksTable";
 
-const API_BASE_URL = "https://taskmanager.proteam-syria.com/api";
+const API_BASE_URL = "/api";
 
 const EMPTY_TASK_STATS = {
   total: 0,

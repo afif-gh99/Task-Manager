@@ -7,7 +7,7 @@ import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import Sign from "../components/Sign";
 
-const API_BASE_URL = "https://taskmanager.proteam-syria.com/api";
+const API_BASE_URL = "/api";
 
 const Signup = () => {
   const navigate = useNavigate();

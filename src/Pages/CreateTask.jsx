@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import TaskForm from "../components/TaskForm";
 import { emptyTaskFormValues } from "../constants/taskForm";
 
-const API_BASE_URL = "https://taskmanager.proteam-syria.com/api";
+const API_BASE_URL = "/api";
 
 const CreateTask = () => {
   const navigate = useNavigate();
